@@ -45,6 +45,8 @@
 <script>
 import axios from "axios";
 import { AUTH_API } from "@/factories/auth";
+import { mapActions } from "vuex";
+import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
 
 export default {
   name: "login-page",
@@ -60,19 +62,25 @@ export default {
   },
 
   methods: {
+    ...mapActions({ login: AUTHENTICATION_ACTIONS.login }),
+
     submitLogin() {
       if (!this.checkFormError()) {
-        console.log(process.env.VUE_APP_BASE_URL);
         const loginFormData = new FormData();
         loginFormData.append("email", this.loginValue.email);
         loginFormData.append("password", this.loginValue.password);
         axios
           .post(AUTH_API.loginApi, loginFormData)
           .then((res) => {
-            console.log(res);
+            if (res.data) {
+              this.login(res.data.user);
+              this.$router.push("/");
+            }
           })
           .catch((err) => {
-            console.log(err);
+            if (err.response.status && err.response.status === 401) {
+              this.error = "Email or Password is incorrect";
+            }
           });
       }
     },
