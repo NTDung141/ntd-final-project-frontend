@@ -10,7 +10,6 @@
         <input
           type="email"
           class="form-control login-input"
-          placeholder="Email"
           v-model="loginValue.email"
         />
       </div>
@@ -20,7 +19,6 @@
         <input
           type="password"
           class="form-control login-input"
-          placeholder="Password"
           v-model="loginValue.password"
         />
       </div>
