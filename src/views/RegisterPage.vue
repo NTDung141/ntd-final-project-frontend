@@ -10,6 +10,7 @@
         <input
           type="text"
           class="form-control register-input"
+          maxlength="50"
           v-model="registerValue.name"
         />
       </div>
@@ -19,6 +20,7 @@
         <input
           type="email"
           class="form-control register-input"
+          maxlength="50"
           v-model="registerValue.email"
         />
       </div>
@@ -28,6 +30,7 @@
         <input
           type="password"
           class="form-control register-input"
+          maxlength="50"
           v-model="registerValue.password"
         />
       </div>
@@ -37,6 +40,7 @@
         <input
           type="password"
           class="form-control register-input"
+          maxlength="50"
           v-model="registerValue.confirmPassword"
         />
       </div>

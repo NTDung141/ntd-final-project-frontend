@@ -10,6 +10,7 @@
         <input
           type="email"
           class="form-control login-input"
+          maxlength="50"
           v-model="loginValue.email"
         />
       </div>
@@ -19,6 +20,7 @@
         <input
           type="password"
           class="form-control login-input"
+          maxlength="50"
           v-model="loginValue.password"
         />
       </div>
