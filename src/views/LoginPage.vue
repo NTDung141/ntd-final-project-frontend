@@ -5,12 +5,6 @@
         <div class="login-form-title">Sign in</div>
       </div>
 
-      <div v-if="this.error" class="alert alert-danger" role="alert">
-        <div class="login-form-error">
-          {{ this.error }}
-        </div>
-      </div>
-
       <div class="mb-3">
         <label class="login-form-label">Email address</label>
         <input
@@ -31,13 +25,24 @@
         />
       </div>
 
+      <div v-if="this.error" class="alert alert-danger" role="alert">
+        <div class="login-form-error">
+          {{ this.error }}
+        </div>
+      </div>
+
       <button
         type="submit"
-        class="btn btn-primary login-button"
+        class="btn btn-primary login-button mb-3"
         @click="submitLogin"
       >
         Sign in
       </button>
+
+      <div class="mb-3">
+        <div>New to app?</div>
+        <router-link to="/register">Register now</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -118,11 +123,12 @@ export default {
   /* display: table-cell;
   vertical-align: middle; */
   margin: auto;
+  margin-top: 60px;
   padding: 20px 20px;
   min-width: 300px;
   min-height: 300px;
-  max-width: 400px;
-  max-height: 400px;
+  max-width: 450px;
+  max-height: 450px;
   border: 1px solid gray;
   border-radius: 5px;
 }
