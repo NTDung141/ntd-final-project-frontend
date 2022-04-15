@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import axios from "axios";
 import { AUTH_API } from "@/factories/auth";
 import { emailValidateRegex } from "@/enums/regexStr";
@@ -141,6 +142,7 @@ export default {
           .post(AUTH_API.registerApi, registerFormData)
           .then((res) => {
             if (res.data) {
+              Vue.$toast.success("Register success!");
               this.$router.push("/login");
             }
           })
