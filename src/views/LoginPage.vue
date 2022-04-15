@@ -50,6 +50,7 @@ import axios from "axios";
 import { AUTH_API } from "@/factories/auth";
 import { mapActions } from "vuex";
 import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
+import { emailValidateRegex } from "@/enums/regexStr";
 
 export default {
   name: "login-page",
@@ -95,6 +96,10 @@ export default {
       }
       if (!this.loginValue.password) {
         this.error = "Password is required";
+        return true;
+      }
+      if (!this.loginValue.email.match(emailValidateRegex)) {
+        this.error = "Email is invalid";
         return true;
       }
       if (this.loginValue.password && this.loginValue.password.length < 8) {

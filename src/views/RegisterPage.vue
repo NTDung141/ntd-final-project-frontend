@@ -5,12 +5,6 @@
         <div class="register-form-title">Sign up</div>
       </div>
 
-      <div v-if="this.error" class="alert alert-danger" role="alert">
-        <div class="register-form-error">
-          {{ this.error }}
-        </div>
-      </div>
-
       <div class="mb-3">
         <label class="register-form-label">Name</label>
         <input
@@ -47,6 +41,12 @@
         />
       </div>
 
+      <div v-if="this.error" class="alert alert-danger" role="alert">
+        <div class="register-form-error">
+          {{ this.error }}
+        </div>
+      </div>
+
       <button
         type="submit"
         class="btn btn-primary register-button"
@@ -61,6 +61,7 @@
 <script>
 import axios from "axios";
 import { AUTH_API } from "@/factories/auth";
+import { emailValidateRegex } from "@/enums/regexStr";
 
 export default {
   name: "register-page",
@@ -93,6 +94,10 @@ export default {
       }
       if (!this.registerValue.confirmPassword) {
         this.error = "Confirm password is required";
+        return true;
+      }
+      if (!this.registerValue.email.match(emailValidateRegex)) {
+        this.error = "Email is invalid";
         return true;
       }
       if (
