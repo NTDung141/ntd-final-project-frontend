@@ -12,11 +12,19 @@
       </div>
 
       <div class="mb-3">
+        <label class="register-form-label">Name</label>
+        <input
+          type="text"
+          class="form-control register-input"
+          v-model="registerValue.name"
+        />
+      </div>
+
+      <div class="mb-3">
         <label class="register-form-label">Email address</label>
         <input
           type="email"
           class="form-control register-input"
-          placeholder="Email"
           v-model="registerValue.email"
         />
       </div>
@@ -26,7 +34,6 @@
         <input
           type="password"
           class="form-control register-input"
-          placeholder="Password"
           v-model="registerValue.password"
         />
       </div>
@@ -36,7 +43,6 @@
         <input
           type="password"
           class="form-control register-input"
-          placeholder="Password"
           v-model="registerValue.confirmPassword"
         />
       </div>
@@ -53,12 +59,16 @@
 </template>
 
 <script>
+import axios from "axios";
+import { AUTH_API } from "@/factories/auth";
+
 export default {
   name: "register-page",
 
   data() {
     return {
       registerValue: {
+        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -69,16 +79,38 @@ export default {
 
   methods: {
     checkFormError() {
-      if (!this.loginValue.email) {
+      if (!this.registerValue.name) {
+        this.error = "Name is required";
+        return true;
+      }
+      if (!this.registerValue.email) {
         this.error = "Email is required";
         return true;
       }
-      if (!this.loginValue.password) {
+      if (!this.registerValue.password) {
         this.error = "Password is required";
         return true;
       }
-      if (this.loginValue.password && this.loginValue.password.length < 8) {
+      if (!this.registerValue.confirmPassword) {
+        this.error = "Confirm password is required";
+        return true;
+      }
+      if (
+        this.registerValue.password &&
+        this.registerValue.password.length < 8
+      ) {
         this.error = "Password must be greater 8 character";
+        return true;
+      }
+      if (
+        this.registerValue.confirmPassword &&
+        this.registerValue.confirmPassword.length < 8
+      ) {
+        this.error = "Confirm password must be greater 8 character";
+        return true;
+      }
+      if (this.registerValue.confirmPassword !== this.registerValue.password) {
+        this.error = "Confirm password does not match";
         return true;
       }
 
@@ -88,23 +120,24 @@ export default {
 
     submitRegister() {
       if (!this.checkFormError()) {
-        // const loginFormData = new FormData();
-        // loginFormData.append("email", this.loginValue.email);
-        // loginFormData.append("password", this.loginValue.password);
-        // axios
-        //   .post(AUTH_API.loginApi, loginFormData)
-        //   .then((res) => {
-        //     if (res.data) {
-        //       this.login(res.data.user);
-        //       this.$router.push("/");
-        //     }
-        //   })
-        //   .catch((err) => {
-        //     if (err.response.status && err.response.status === 401) {
-        //       this.error = "Email or Password is incorrect";
-        //     }
-        //   });
-        this.$router.push("/login");
+        const registerFormData = new FormData();
+        registerFormData.append("name", this.registerValue.name);
+        registerFormData.append("email", this.registerValue.email);
+        registerFormData.append("password", this.registerValue.password);
+        registerFormData.append(
+          "password_confirmation",
+          this.registerValue.confirmPassword
+        );
+        axios
+          .post(AUTH_API.registerApi, registerFormData)
+          .then((res) => {
+            if (res.data) {
+              this.$router.push("/login");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
   },
@@ -124,8 +157,8 @@ export default {
   padding: 20px 20px;
   min-width: 300px;
   min-height: 300px;
-  max-width: 450px;
-  max-height: 450px;
+  max-width: 400px;
+  max-height: 600px;
   border: 1px solid gray;
   border-radius: 5px;
 }

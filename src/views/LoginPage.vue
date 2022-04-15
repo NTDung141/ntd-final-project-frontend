@@ -127,7 +127,7 @@ export default {
   padding: 20px 20px;
   min-width: 300px;
   min-height: 300px;
-  max-width: 450px;
+  max-width: 400px;
   max-height: 450px;
   border: 1px solid gray;
   border-radius: 5px;
