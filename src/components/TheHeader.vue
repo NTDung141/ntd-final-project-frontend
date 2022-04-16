@@ -139,7 +139,7 @@ export default {
 
       Cookies.remove("accessToken");
       Cookies.remove("userInfo");
-      this.$router.push("/");
+      this.$router.push("/login");
     },
   },
 };
