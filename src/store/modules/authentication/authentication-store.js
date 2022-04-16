@@ -8,12 +8,20 @@ const AUTHENTICATION_STORE = {
   actions: {
     login({ commit }, userInfo) {
       commit(AUTHENTICATION_ACTIONS.login, userInfo)
+    },
+
+    logout({ commit }) {
+      commit(AUTHENTICATION_ACTIONS.logout)
     }
   },
 
   mutations: {
     login(state, userInfo) {
       state.userInfo = userInfo
+    },
+
+    logout(state) {
+      state.userInfo = {}
     }
   },
 
