@@ -35,7 +35,7 @@
           </li>
         </ul>
 
-        <div v-if="!userInfo">
+        <div v-if="!userInfo.email">
           <router-link class="btn btn-light my-2 my-sm-0 mr-2" to="/login">
             Sign in
           </router-link>
@@ -48,7 +48,7 @@
           </router-link>
         </div>
 
-        <div v-if="userInfo" class="btn-group">
+        <div v-if="userInfo.email" class="btn-group">
           <div
             class="header-avatar dropdown-toggle"
             :style="bgImg"
@@ -59,7 +59,9 @@
 
           <div class="dropdown-menu dropdown-menu-right">
             <button class="dropdown-item" type="button">User Profile</button>
-            <button class="dropdown-item" type="button">Sign out</button>
+            <button class="dropdown-item" type="button" @click="onLogout()">
+              Sign out
+            </button>
           </div>
         </div>
       </div>
@@ -70,6 +72,12 @@
 <script>
 import { mapGetters } from "vuex";
 import AUTHENTICATION_GETTERS from "@/store/modules/authentication/authentication-getters";
+import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
+import { mapActions } from "vuex";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { AUTH_API } from "@/factories/auth";
+
 export default {
   name: "the-header",
 
@@ -103,12 +111,40 @@ export default {
   },
 
   methods: {
+    ...mapActions({ logout: AUTHENTICATION_ACTIONS.logout }),
+
     changeCurrentRoute(newRoute) {
       this.currentRouteName = newRoute;
+    },
+
+    onLogout() {
+      const accessToken = Cookies.get("accessToken");
+
+      if (accessToken) {
+        const headers = {
+          Authorization: `Bearer ${accessToken}`,
+        };
+
+        axios
+          .post(AUTH_API.logoutApi, null, { headers: headers })
+          .then((res) => {
+            if (res) {
+              this.logout();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+
+      Cookies.remove("accessToken");
+      Cookies.remove("userInfo");
+      this.$router.push("/");
     },
   },
 };
 </script>
+
 
 <style>
 .navbar {
