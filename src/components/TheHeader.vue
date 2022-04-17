@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light">
       <button
         class="navbar-toggler"
         type="button"
@@ -18,16 +18,18 @@
           <li
             v-for="routerItem in routerList"
             :key="routerItem.id"
-            class="nav-item"
             @click="changeCurrentRoute(routerItem.to)"
           >
-            <div v-if="currentRouteName === routerItem.to">
-              <router-link class="nav-link active" :to="routerItem.to">
+            <div
+              class="nav-item nav-link-active"
+              v-if="currentRouteName === routerItem.to"
+            >
+              <router-link class="nav-link" :to="routerItem.to">
                 {{ routerItem.name }}
               </router-link>
             </div>
 
-            <div v-else>
+            <div class="nav-item" v-else>
               <router-link class="nav-link" :to="routerItem.to">
                 {{ routerItem.name }}
               </router-link>
@@ -36,19 +38,28 @@
         </ul>
 
         <div v-if="!userInfo.email">
-          <router-link class="btn btn-light my-2 my-sm-0 mr-2" to="/login">
+          <router-link
+            class="btn btn-dark my-2 my-sm-0 mr-2"
+            to="/login"
+            @click.native="changeCurrentRoute('/login')"
+          >
             Sign in
           </router-link>
 
           <router-link
-            class="btn btn-outline-light my-2 my-sm-0"
+            class="btn btn-outline-dark my-2 my-sm-0"
             to="/register"
+            @click.native="changeCurrentRoute('/register')"
           >
             Sign up
           </router-link>
         </div>
 
         <div v-if="userInfo.email" class="btn-group">
+          <div class="mr-3">
+            <i class="fa fa-bell fa-lg" aria-hidden="true"></i>
+          </div>
+
           <div
             class="header-avatar dropdown-toggle"
             :style="bgImg"
@@ -58,10 +69,10 @@
           ></div>
 
           <div class="dropdown-menu dropdown-menu-right">
-            <button class="dropdown-item" type="button">User Profile</button>
-            <button class="dropdown-item" type="button" @click="onLogout()">
+            <div class="dropdown-item" type="button">User Profile</div>
+            <div class="dropdown-item" type="button" @click="onLogout()">
               Sign out
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -105,7 +116,7 @@ export default {
       currentRouteName: this.$router.currentRoute.fullPath,
 
       bgImg: {
-        backgroundImage: `url(${require("@/assets/defaultAvatar.jpg")})`,
+        backgroundImage: `url(${require("@/assets/defaultAvatar2.jpg")})`,
       },
     };
   },
@@ -146,10 +157,57 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .navbar {
-  padding: 10px 20%;
+  padding: 0px 20%;
+  background-color: #fff;
+  min-height: 60px;
 }
+
+.navbar::after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 100%;
+  height: 4px;
+  background: linear-gradient(
+    rgba(9, 30, 66, 0.13) 0px,
+    rgba(9, 30, 66, 0.13) 1px,
+    rgba(9, 30, 66, 0.08) 1px,
+    rgba(9, 30, 66, 0) 4px
+  );
+}
+
+.navbar-nav {
+  min-height: 60px;
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.nav-link-active {
+  color: #343a40 !important;
+  font-weight: 600;
+}
+
+.nav-link-active::after {
+  position: absolute;
+  bottom: 0px;
+  left: 4px;
+  right: 4px;
+  content: "";
+  height: 3px;
+  background-color: var(--ds-iconBorder-brand, #343a40);
+  border-top-left-radius: 1px;
+  border-top-right-radius: 1px;
+}
+
 .header-avatar {
   height: 30px;
   width: 30px;
@@ -164,5 +222,11 @@ export default {
 
 .dropdown-toggle::after {
   display: none;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

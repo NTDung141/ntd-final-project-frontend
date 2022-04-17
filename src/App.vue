@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <TheHeader />
-    <router-view />
+
+    <div class="wrapper">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -10,12 +13,14 @@ import TheHeader from "./components/TheHeader.vue";
 import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
 import { mapActions } from "vuex";
 import Cookies from "js-cookie";
+// import TheSideBar from "@/components/TheSideBar.vue";
 
 export default {
   name: "App",
 
   components: {
     TheHeader,
+    // TheSideBar,
   },
 
   methods: {
@@ -49,5 +54,10 @@ export default {
   color: #2c3e50;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
+}
+
+.wrapper {
+  height: 100%;
 }
 </style>
