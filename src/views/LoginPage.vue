@@ -53,6 +53,7 @@ import { AUTH_API } from "@/factories/auth";
 import { mapActions } from "vuex";
 import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
 import { emailValidateRegex } from "@/enums/regexStr";
+import Cookies from "js-cookie";
 
 export default {
   name: "login-page",
@@ -79,6 +80,8 @@ export default {
           .post(AUTH_API.loginApi, loginFormData)
           .then((res) => {
             if (res.data) {
+              Cookies.set("accessToken", res.data.access_token);
+              Cookies.set("userInfo", JSON.stringify(res.data.user));
               this.login(res.data.user);
               this.$router.push("/");
             }
