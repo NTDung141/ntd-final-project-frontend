@@ -1,83 +1,48 @@
 <template>
-  <div>
-    <nav class="navbar navbar-expand-lg navbar-light">
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+  <v-toolbar class="my-toolbar">
+    <span class="hidden-sm-and-up">
+      <v-toolbar-side-icon @click="sidebar = !sidebar"> </v-toolbar-side-icon>
+    </span>
 
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li
-            v-for="routerItem in routerList"
-            :key="routerItem.id"
-            @click="changeCurrentRoute(routerItem.to)"
-          >
-            <div
-              class="nav-item nav-link-active"
-              v-if="currentRouteName === routerItem.to"
-            >
-              <router-link class="nav-link" :to="routerItem.to">
-                {{ routerItem.name }}
-              </router-link>
-            </div>
+    <v-tabs class="hidden-xs-only">
+      <v-tab v-for="item in menuItems" :key="item.title" :to="item.path">
+        {{ item.title }}
+      </v-tab>
+    </v-tabs>
 
-            <div class="nav-item" v-else>
-              <router-link class="nav-link" :to="routerItem.to">
-                {{ routerItem.name }}
-              </router-link>
-            </div>
-          </li>
-        </ul>
+    <v-space></v-space>
 
-        <div v-if="!userInfo.email">
-          <router-link
-            class="btn btn-dark my-2 my-sm-0 mr-2"
-            to="/login"
-            @click.native="changeCurrentRoute('/login')"
-          >
-            Sign in
-          </router-link>
+    <div v-if="!userInfo.email">
+      <v-btn class="mr-2" depressed color="primary"> Sign in </v-btn>
 
-          <router-link
-            class="btn btn-outline-dark my-2 my-sm-0"
-            to="/register"
-            @click.native="changeCurrentRoute('/register')"
-          >
-            Sign up
-          </router-link>
-        </div>
+      <v-btn depressed outlined color="primary"> Sign up </v-btn>
+    </div>
 
-        <div v-if="userInfo.email" class="btn-group">
-          <div class="mr-3">
-            <i class="fa fa-bell fa-lg" aria-hidden="true"></i>
-          </div>
-
-          <div
-            class="header-avatar dropdown-toggle"
-            :style="bgImg"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          ></div>
-
-          <div class="dropdown-menu dropdown-menu-right">
-            <div class="dropdown-item" type="button">User Profile</div>
-            <div class="dropdown-item" type="button" @click="onLogout()">
-              Sign out
-            </div>
-          </div>
-        </div>
+    <div class="my-toolbar-action" v-if="userInfo.email">
+      <div class="mr-5">
+        <i class="far fa-bell fa-lg"></i>
       </div>
-    </nav>
-  </div>
+
+      <div class="text-center">
+        <v-menu offset-y right>
+          <template v-slot:activator="{ on, attrs }">
+            <v-avatar size="30" v-bind="attrs" v-on="on">
+              <img src="@/assets/defaultAvatar2.jpg" />
+            </v-avatar>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-list-item-title>User Profile</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item @click="onLogout()">
+              <v-list-item-title>Sign out</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
+    </div>
+  </v-toolbar>
 </template>
 
 <script>
@@ -100,33 +65,24 @@ export default {
 
   data() {
     return {
-      routerList: [
-        {
-          id: 1,
-          name: "Home",
-          to: "/",
-        },
-        {
-          id: 2,
-          name: "My project",
-          to: "/my-project",
-        },
+      menuItems: [
+        { title: "Home", path: "/" },
+        { title: "My project", path: "/my-project" },
       ],
 
-      currentRouteName: this.$router.currentRoute.fullPath,
+      sideBar: false,
 
-      bgImg: {
-        backgroundImage: `url(${require("@/assets/defaultAvatar2.jpg")})`,
-      },
+      items: [
+        { title: "Click Me" },
+        { title: "Click Me" },
+        { title: "Click Me" },
+        { title: "Click Me 2" },
+      ],
     };
   },
 
   methods: {
     ...mapActions({ logout: AUTHENTICATION_ACTIONS.logout }),
-
-    changeCurrentRoute(newRoute) {
-      this.currentRouteName = newRoute;
-    },
 
     onLogout() {
       const accessToken = Cookies.get("accessToken");
@@ -158,73 +114,11 @@ export default {
 
 
 <style scoped>
-.navbar {
+.my-toolbar {
   padding: 0px 20%;
-  background-color: #fff;
-  min-height: 60px;
 }
 
-.navbar::after {
-  content: "";
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 100%;
-  height: 4px;
-  background: linear-gradient(
-    rgba(9, 30, 66, 0.13) 0px,
-    rgba(9, 30, 66, 0.13) 1px,
-    rgba(9, 30, 66, 0.08) 1px,
-    rgba(9, 30, 66, 0) 4px
-  );
-}
-
-.navbar-nav {
-  min-height: 60px;
-}
-
-.nav-item {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.nav-link-active {
-  color: #343a40 !important;
-  font-weight: 600;
-}
-
-.nav-link-active::after {
-  position: absolute;
-  bottom: 0px;
-  left: 4px;
-  right: 4px;
-  content: "";
-  height: 3px;
-  background-color: var(--ds-iconBorder-brand, #343a40);
-  border-top-left-radius: 1px;
-  border-top-right-radius: 1px;
-}
-
-.header-avatar {
-  height: 30px;
-  width: 30px;
-  border-radius: 100%;
-  background-size: cover;
-}
-
-.dropdown-menu-right {
-  right: 0;
-  left: auto;
-}
-
-.dropdown-toggle::after {
-  display: none;
-}
-
-.btn-group {
+.my-toolbar-action {
   display: flex;
   justify-content: center;
   align-items: center;
