@@ -145,7 +145,7 @@ export default {
       this.loading = this.loader;
       this.loading = !this.loading;
 
-      setTimeout(() => (this.loading = false), 5000);
+      setTimeout(() => (this.loading = false), 8000);
 
       this.loader = null;
     },
@@ -153,7 +153,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .login-page {
   background-color: white;
   height: 100%;
