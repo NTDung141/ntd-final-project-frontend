@@ -41,7 +41,7 @@
 
         <div class="login-form-footer">
           <div class="mr-3">New to app?</div>
-          <router-link to="/register">Register now</router-link>
+          <router-link to="/register">Sign up now</router-link>
         </div>
       </v-card>
     </form>
