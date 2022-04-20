@@ -1,6 +1,6 @@
 <template>
   <div class="register-page">
-    <div class="register-form">
+    <!-- <div class="register-form">
       <div class="mb-3">
         <div class="register-form-title">Sign up</div>
       </div>
@@ -58,7 +58,75 @@
       >
         Sign up
       </button>
-    </div>
+    </div> -->
+
+    <form>
+      <v-card class="register-form" elevation="5">
+        <v-card-title class="register-form-title">Sign up</v-card-title>
+
+        <v-text-field
+          v-model="name"
+          :error-messages="nameErrors"
+          :counter="50"
+          label="Full name"
+          outlined
+          required
+          @input="$v.name.$touch()"
+          @blur="$v.name.$touch()"
+        ></v-text-field>
+
+        <v-text-field
+          v-model="email"
+          :error-messages="emailErrors"
+          :counter="50"
+          label="E-mail"
+          outlined
+          required
+          @input="$v.email.$touch()"
+          @blur="$v.email.$touch()"
+        ></v-text-field>
+
+        <v-text-field
+          :type="isShowPassword ? 'text' : 'password'"
+          :append-icon="isShowPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+          @click:append="isShowPassword = !isShowPassword"
+          v-model="password"
+          :error-messages="passwordErrors"
+          :counter="50"
+          label="Password"
+          outlined
+          required
+          @input="$v.password.$touch()"
+          @blur="$v.password.$touch()"
+        ></v-text-field>
+
+        <v-text-field
+          :type="isShowConfirmPassword ? 'text' : 'password'"
+          :append-icon="
+            isShowConfirmPassword ? 'fas fa-eye' : 'fas fa-eye-slash'
+          "
+          @click:append="isShowConfirmPassword = !isShowConfirmPassword"
+          v-model="confirmPassword"
+          :error-messages="confirmPasswordErrors"
+          :counter="50"
+          label="Password"
+          outlined
+          required
+          @input="$v.confirmPassword.$touch()"
+          @blur="$v.confirmPassword.$touch()"
+        ></v-text-field>
+
+        <v-btn
+          block
+          depressed
+          color="primary"
+          @click="submitRegister"
+          :loading="loading"
+        >
+          Sign up
+        </v-btn>
+      </v-card>
+    </form>
   </div>
 </template>
 
@@ -66,78 +134,110 @@
 import Vue from "vue";
 import axios from "axios";
 import { AUTH_API } from "@/factories/auth";
-import { emailValidateRegex } from "@/enums/regexStr";
+import { validationMixin } from "vuelidate";
+import { required, maxLength, email, sameAs } from "vuelidate/lib/validators";
 
 export default {
   name: "register-page",
 
+  mixins: [validationMixin],
+
+  validations: {
+    email: { required, email, maxLength: maxLength(50) },
+    name: { required, maxLength: maxLength(50) },
+    password: { required, maxLength: maxLength(50) },
+    confirmPassword: {
+      required,
+      maxLength: maxLength(50),
+      sameAsPassword: sameAs("password"),
+    },
+  },
+
   data() {
     return {
-      registerValue: {
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      },
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+
       error: "",
+
+      loader: null,
+      loading: false,
+      isShowPassword: false,
+      isShowConfirmPassword: false,
     };
   },
 
-  methods: {
-    checkFormError() {
-      if (!this.registerValue.name) {
-        this.error = "Name is required";
-        return true;
+  computed: {
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.name.$dirty) {
+        return errors;
       }
-      if (!this.registerValue.email) {
-        this.error = "Email is required";
-        return true;
-      }
-      if (!this.registerValue.password) {
-        this.error = "Password is required";
-        return true;
-      }
-      if (!this.registerValue.confirmPassword) {
-        this.error = "Confirm password is required";
-        return true;
-      }
-      if (!this.registerValue.email.match(emailValidateRegex)) {
-        this.error = "Email is invalid";
-        return true;
-      }
-      if (
-        this.registerValue.password &&
-        this.registerValue.password.length < 8
-      ) {
-        this.error = "Password must be greater 8 character";
-        return true;
-      }
-      if (
-        this.registerValue.confirmPassword &&
-        this.registerValue.confirmPassword.length < 8
-      ) {
-        this.error = "Confirm password must be greater 8 character";
-        return true;
-      }
-      if (this.registerValue.confirmPassword !== this.registerValue.password) {
-        this.error = "Confirm password does not match";
-        return true;
+      if (!this.$v.name.required) {
+        errors.push("E-mail is required");
       }
 
-      this.error = "";
-      return false;
+      return errors;
+    },
+
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) {
+        return errors;
+      }
+      if (!this.$v.email.email) {
+        errors.push("Must be valid e-mail");
+      }
+      if (!this.$v.email.required) {
+        errors.push("E-mail is required");
+      }
+
+      return errors;
+    },
+
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.password.$dirty) {
+        return errors;
+      }
+      if (!this.$v.password.required) {
+        errors.push("Password is required");
+      }
+      return errors;
+    },
+
+    confirmPasswordErrors() {
+      const errors = [];
+      if (!this.$v.confirmPassword.$dirty) {
+        return errors;
+      }
+      if (!this.$v.confirmPassword.required) {
+        errors.push("Confirm password is required");
+      }
+      if (!this.$v.confirmPassword.sameAsPassword) {
+        errors.push("Password and Confirm Password should match");
+      }
+      return errors;
+    },
+  },
+
+  methods: {
+    onLoading() {
+      this.isLoading = true;
+      this.loader = "loading";
     },
 
     submitRegister() {
-      if (!this.checkFormError()) {
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        this.onLoading();
         const registerFormData = new FormData();
-        registerFormData.append("name", this.registerValue.name);
-        registerFormData.append("email", this.registerValue.email);
-        registerFormData.append("password", this.registerValue.password);
-        registerFormData.append(
-          "password_confirmation",
-          this.registerValue.confirmPassword
-        );
+        registerFormData.append("name", this.name);
+        registerFormData.append("email", this.email);
+        registerFormData.append("password", this.password);
+        registerFormData.append("password_confirmation", this.confirmPassword);
         axios
           .post(AUTH_API.registerApi, registerFormData)
           .then((res) => {
@@ -152,11 +252,22 @@ export default {
       }
     },
   },
+
+  watch: {
+    loader() {
+      this.loading = this.loader;
+      this.loading = !this.loading;
+
+      setTimeout(() => (this.loading = false), 8000);
+
+      this.loader = null;
+    },
+  },
 };
 </script>
 
 <style>
-.login-page {
+.register-page {
   background-color: white;
   height: 100%;
   width: 100%;
@@ -166,34 +277,18 @@ export default {
   margin: auto;
   margin-top: 60px;
   padding: 20px 20px;
-  min-width: 300px;
-  min-height: 300px;
-  max-width: 400px;
-  max-height: 600px;
-  border: 1px solid gray;
-  border-radius: 5px;
+  min-width: 300px !important;
+  min-height: 300px !important;
+  max-width: 400px !important;
+  max-height: 600px !important;
 }
 
 .register-form-title {
-  font-size: 35px;
-  font-weight: 500;
-}
-
-.register-form-label {
   display: flex;
-  justify-content: flex-start;
-}
-
-.register-input {
-  width: 100%;
-}
-
-.register-button {
-  width: 100%;
-}
-
-.register-form-error {
-  display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px !important;
+  font-weight: 400 !important;
+  margin-bottom: 15px;
 }
 </style>
