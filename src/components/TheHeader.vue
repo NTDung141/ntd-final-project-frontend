@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-header">
     <v-toolbar class="my-toolbar">
       <span class="hidden-sm-and-up">
         <i class="fas fa-bars" @click="sidebar = !sidebar"></i>
@@ -120,6 +120,9 @@ export default {
 
 
 <style scoped>
+.my-header {
+  z-index: 3;
+}
 .my-toolbar {
   padding: 0px 20%;
 }

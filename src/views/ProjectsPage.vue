@@ -6,7 +6,14 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn depressed color="primary"> Create </v-btn>
+        <v-btn depressed color="primary" @click.stop="showProjectCreate = true">
+          Create
+        </v-btn>
+
+        <ProjectCreate
+          :visible="showProjectCreate"
+          @close="showProjectCreate = false"
+        />
       </v-card-title>
 
       <v-text-field
@@ -49,11 +56,18 @@
 </template>
   
 <script>
+import ProjectCreate from "@/components/ProjectCreate.vue";
+
 export default {
   name: "projects-page",
 
+  components: {
+    ProjectCreate,
+  },
+
   data() {
     return {
+      showProjectCreate: false,
       search: "",
       headers: [
         {
