@@ -6,9 +6,8 @@
       </span>
 
       <v-tabs class="hidden-xs-only">
-        <v-tab v-for="item in menuItems" :key="item.title" :to="item.path">
-          {{ item.title }}
-        </v-tab>
+        <v-tab to="/"> Home </v-tab>
+        <v-tab to="/my-project" v-if="userInfo.email"> My project </v-tab>
       </v-tabs>
 
       <v-spacer></v-spacer>
@@ -71,11 +70,6 @@ export default {
 
   data() {
     return {
-      menuItems: [
-        { title: "Home", path: "/" },
-        { title: "My project", path: "/my-project" },
-      ],
-
       sideBar: true,
 
       items: [

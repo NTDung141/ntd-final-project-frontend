@@ -5,15 +5,26 @@ import LoginPage from '../views/LoginPage.vue'
 import RegisterPage from '../views/RegisterPage.vue'
 import ProjectsPage from '../views/ProjectsPage.vue'
 import ProjectDetailPage from '../views/ProjectDetailPage.vue'
+import Cookies from "js-cookie";
 
 Vue.use(VueRouter)
+
+function beforeEnter(to, from, next) {
+  const userInfo = Cookies.get("userInfo");
+  if (userInfo) {
+    next()
+  }
+  else {
+    next('/login')
+  }
+}
 
 const routes = [
   { path: "/", component: HelloWorld },
   { path: "/login", component: LoginPage },
   { path: "/register", component: RegisterPage },
-  { path: "/my-project", component: ProjectsPage },
-  { path: "/my-project/details", component: ProjectDetailPage }
+  { path: "/my-project", component: ProjectsPage, beforeEnter: beforeEnter },
+  { path: "/my-project/details", component: ProjectDetailPage, beforeEnter: beforeEnter }
 ]
 
 export const router = new VueRouter({
