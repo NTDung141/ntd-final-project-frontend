@@ -93,6 +93,10 @@ export default {
     onLogout() {
       const accessToken = Cookies.get("accessToken");
 
+      Cookies.remove("accessToken");
+      Cookies.remove("userInfo");
+      this.$router.push("/login");
+
       if (accessToken) {
         const headers = {
           Authorization: `Bearer ${accessToken}`,
@@ -109,10 +113,6 @@ export default {
             console.log(err);
           });
       }
-
-      Cookies.remove("accessToken");
-      Cookies.remove("userInfo");
-      this.$router.push("/login");
     },
   },
 };

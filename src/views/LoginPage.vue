@@ -13,6 +13,7 @@
           required
           @input="$v.email.$touch()"
           @blur="$v.email.$touch()"
+          @keyup.enter="submitLogin"
         ></v-text-field>
 
         <v-text-field
@@ -27,6 +28,7 @@
           required
           @input="$v.password.$touch()"
           @blur="$v.password.$touch()"
+          @keyup.enter="submitLogin"
         ></v-text-field>
 
         <v-btn

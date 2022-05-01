@@ -50,9 +50,9 @@
             <template v-slot:append>
               <v-menu offset-x right max-width="200px">
                 <template v-slot:activator="{ on, attrs }">
-                  <v-icon v-on="on" v-bind="attrs" color="primary"
-                    >fas fa-info-circle</v-icon
-                  >
+                  <v-icon v-on="on" v-bind="attrs" color="primary">
+                    fas fa-info-circle
+                  </v-icon>
                 </template>
 
                 <v-card>
@@ -81,6 +81,8 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   name: "project-create",
@@ -154,8 +156,30 @@ export default {
   methods: {
     submit() {
       console.log(this.formValid);
+      let data = new FormData();
+      data.append("name", this.projectName);
+      data.append("key", this.projectKey);
+
       this.projectName = "";
       this.projectKey = "";
+
+      const accessToken = Cookies.get("accessToken");
+      console.log("token", accessToken);
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      axios
+        .post("http://127.0.0.1:8000/api/auth/project/create", data, {
+          headers: headers,
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
       this.show = false;
     },
 

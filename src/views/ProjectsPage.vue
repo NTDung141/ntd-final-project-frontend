@@ -57,6 +57,8 @@
   
 <script>
 import ProjectCreate from "@/components/ProjectCreate.vue";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   name: "projects-page",
@@ -170,6 +172,25 @@ export default {
         },
       ],
     };
+  },
+
+  mounted() {
+    const accessToken = Cookies.get("accessToken");
+    console.log("token", accessToken);
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    axios
+      .get("http://127.0.0.1:8000/api/auth/project/get-all", {
+        headers: headers,
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 
   methods: {
