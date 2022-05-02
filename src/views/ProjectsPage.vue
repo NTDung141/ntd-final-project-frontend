@@ -231,7 +231,8 @@ export default {
 .project-page {
   height: 100%;
   width: 99%;
-  padding: 30px 30px;
+  padding: 30px 30px 100px 30px;
+  margin-bottom: 50px;
   overflow-x: hidden;
 }
 
