@@ -12,6 +12,7 @@
 import TheHeader from "./components/TheHeader.vue";
 import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
 import { mapActions } from "vuex";
+import Cookies from "js-cookie";
 
 export default {
   name: "App",
@@ -22,6 +23,16 @@ export default {
 
   methods: {
     ...mapActions({ login: AUTHENTICATION_ACTIONS.login }),
+  },
+
+  created() {
+    const userInfo = JSON.parse(Cookies.get("userInfo"));
+
+    if (userInfo) {
+      this.login(userInfo);
+    } else {
+      this.$router.push("/login");
+    }
   },
 };
 </script>
