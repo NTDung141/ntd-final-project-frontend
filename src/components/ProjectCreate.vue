@@ -31,7 +31,8 @@
           <v-text-field
             v-model="projectName"
             :rules="nameRules"
-            @input="autoGetKey"
+            @input="handleProjectName"
+            @keyup.enter="submit"
             dense
             outlined
           ></v-text-field>
@@ -44,6 +45,8 @@
             class="project-create-key-input"
             v-model="projectKey"
             :rules="keyRules"
+            @input="handleProjectKey"
+            @keyup.enter="submit"
             dense
             outlined
           >
@@ -155,38 +158,56 @@ export default {
 
   methods: {
     submit() {
-      console.log(this.formValid);
-      let data = new FormData();
-      data.append("name", this.projectName);
-      data.append("key", this.projectKey);
+      if (this.projectName && this.projectKey) {
+        let data = new FormData();
+        data.append("name", this.projectName);
+        data.append("key", this.projectKey);
 
-      this.projectName = "";
-      this.projectKey = "";
+        this.projectName = "";
+        this.projectKey = "";
 
-      const accessToken = Cookies.get("accessToken");
-      console.log("token", accessToken);
-      const headers = {
-        Authorization: `Bearer ${accessToken}`,
-      };
+        const accessToken = Cookies.get("accessToken");
+        console.log("token", accessToken);
+        const headers = {
+          Authorization: `Bearer ${accessToken}`,
+        };
 
-      axios
-        .post("http://127.0.0.1:8000/api/auth/project/create", data, {
-          headers: headers,
-        })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        axios
+          .post("http://127.0.0.1:8000/api/auth/project/create", data, {
+            headers: headers,
+          })
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
 
-      this.show = false;
+        this.show = false;
+      }
     },
 
-    autoGetKey() {
+    handleProjectName() {
       const sep = /\s/;
       const projectNameArr = this.projectName.split(sep);
 
+      this.autoGetKey(projectNameArr);
+      this.autoUpperCaseFirstLetter(projectNameArr);
+    },
+
+    handleProjectKey() {
+      this.projectKey = this.projectKey.toUpperCase().replace(" ", "");
+    },
+
+    autoUpperCaseFirstLetter(projectNameArr) {
+      let newProjectName = "";
+      for (let item of projectNameArr) {
+        newProjectName += item.charAt(0).toUpperCase() + item.slice(1) + " ";
+      }
+      this.projectName = newProjectName.trim();
+    },
+
+    autoGetKey(projectNameArr) {
       let newKey = "";
       let keyCounter = 0;
       for (let item of projectNameArr) {
@@ -197,7 +218,7 @@ export default {
           break;
         }
       }
-      this.projectKey = newKey;
+      this.projectKey = newKey.trim();
     },
   },
 };
