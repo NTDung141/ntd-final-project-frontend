@@ -7,54 +7,39 @@
 
       <v-card-text class="project-detail-content">
         <div class="project-detail-details">
-          <div class="project-detail-label">Name</div>
-          <v-text-field v-model="projectName" dense outlined></v-text-field>
+          <v-form v-model="formValid" @submit.prevent="submit">
+            <div class="project-detail-label">Name</div>
+            <v-text-field
+              v-model="projectName"
+              :rules="nameRules"
+              @input="handleProjectName"
+              @change="isDisableSaveButton"
+              dense
+              outlined
+            ></v-text-field>
 
-          <div class="project-detail-label">Key</div>
-          <v-text-field v-model="projectKey" dense outlined></v-text-field>
+            <div class="project-detail-label">Key</div>
+            <v-text-field
+              v-model="projectKey"
+              :rules="keyRules"
+              @input="handleProjectKey"
+              @change="isDisableSaveButton"
+              dense
+              outlined
+            ></v-text-field>
 
-          <div class="project-detail-label">Project lead</div>
-          <v-select
-            v-model="projectLeadComputed"
-            :items="members"
-            :menu-props="{ bottom: true, offsetY: true }"
-            cache-items
-            outlined
-            clearable
-            dense
-          >
-            <template v-slot:selection="{ item, attrs }">
-              <v-list-item v-bind="attrs">
-                <v-avatar size="16" class="mr-2">
-                  <img src="@/assets/defaultAvatar2.jpg" />
-                </v-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="combobox-item-name">
-                    {{ item.name }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-
-            <template v-slot:item="{ item, attrs, on }">
-              <v-list-item v-on="on" v-bind="attrs">
-                <v-avatar size="16" class="mr-2">
-                  <img src="@/assets/defaultAvatar2.jpg" />
-                </v-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="combobox-item-name">
-                    {{ item.name }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-          </v-select>
-
-          <div class="project-detail-label">
-            <v-btn small depressed color="primary"> Save</v-btn>
-          </div>
+            <div class="project-detail-label">
+              <v-btn
+                small
+                depressed
+                color="primary"
+                @click="submit"
+                :disabled="isDisableSaveButton"
+              >
+                Save</v-btn
+              >
+            </div>
+          </v-form>
         </div>
       </v-card-text>
     </v-card>
@@ -69,30 +54,67 @@ export default {
     return {
       projectName: "",
       projectKey: "",
-      projectLead: null,
-      members: [
-        { id: 1, name: "Nguyen Thanh Dung" },
-        { id: 2, name: "Le Canh Kieu Oanh" },
-        { id: 3, name: "Pham Van Tanh" },
+      formValid: true,
+
+      keyRules: [
+        (value) => !!value || "Key is required.",
+        (value) => (value && value.length <= 6) || "Max 6 characters",
       ],
-      isEditCombobox: true,
+
+      nameRules: [
+        (value) => !!value || "Name is required.",
+        (value) => (value && value.length <= 50) || "Max 50 characters",
+      ],
     };
   },
 
+  props: {
+    project: Object,
+  },
+
+  methods: {
+    handleProjectName() {
+      const sep = /\s/;
+      const projectNameArr = this.projectName.split(sep);
+
+      this.autoUpperCaseFirstLetter(projectNameArr);
+    },
+
+    handleProjectKey() {
+      this.projectKey = this.projectKey.toUpperCase().replace(" ", "");
+    },
+
+    autoUpperCaseFirstLetter(projectNameArr) {
+      let newProjectName = "";
+      for (let item of projectNameArr) {
+        newProjectName += item.charAt(0).toUpperCase() + item.slice(1) + " ";
+      }
+      this.projectName = newProjectName.trim();
+    },
+
+    submit() {
+      // write axios
+    },
+  },
+
   computed: {
-    projectLeadComputed: {
-      get() {
-        console.log("get");
-        if (this.projectLead) {
-          return this.projectLead;
-        } else {
-          return {};
-        }
-      },
-      set(item) {
-        const selectedItem = JSON.parse(JSON.stringify(item));
-        this.projectLead = selectedItem;
-      },
+    isDisableSaveButton() {
+      if (
+        (this.project.name !== this.projectName ||
+          this.project.key !== this.projectKey) &&
+        this.formValid
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+  },
+
+  watch: {
+    project() {
+      this.projectName = this.project.name;
+      this.projectKey = this.project.key;
     },
   },
 };

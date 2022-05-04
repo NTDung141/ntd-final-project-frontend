@@ -31,17 +31,25 @@
       </v-text-field>
 
       <v-data-table :headers="headers" :items="projects" :search="search">
-        <template v-slot:[`item.status`]="{ item }">
-          <div :class="'project-status ' + getStatusClass(item.status)">
-            {{ getStatus(item.status) }}
-          </div>
+        <template v-slot:[`item.name`]="{ item }">
+          <router-link :to="`/my-project/${item.id}`">{{
+            item.name
+          }}</router-link>
+        </template>
+
+        <template v-slot:[`item.created_at`]="{ item }">
+          <div>{{ item.created_at }}</div>
         </template>
 
         <template v-slot:[`item.lead`]="{ item }">
-          <v-avatar size="20" class="mr-2">
-            <img src="@/assets/defaultAvatar2.jpg" />
-          </v-avatar>
-          {{ item.lead }}
+          <div v-for="user in item.users" :key="user.id">
+            <div v-if="user.pivot.role === 1">
+              <v-avatar size="20" class="mr-2">
+                <img src="@/assets/defaultAvatar2.jpg" />
+              </v-avatar>
+              {{ user.name }}
+            </div>
+          </div>
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
@@ -79,7 +87,7 @@ export default {
           width: "30%",
         },
         { text: "Key", value: "key", width: "20%" },
-        { text: "Status", value: "status", width: "20%" },
+        { text: "Created at", value: "created_at", width: "20%" },
         { text: "Lead", value: "lead", width: "20%" },
         {
           text: "",
@@ -89,88 +97,7 @@ export default {
           width: "10%",
         },
       ],
-      projects: [
-        {
-          name: "Frozen Yogurt",
-          key: "FY",
-          status: 1,
-          lead: "Nguyen Thanh Dung",
-          protein: 4.0,
-          iron: "1%",
-        },
-        {
-          name: "Ice cream sandwich",
-          key: "ICS",
-          status: 2,
-          lead: "Le Canh Kieu Oanh",
-          protein: 4.3,
-          iron: "1%",
-        },
-        {
-          name: "Eclair",
-          key: "EC",
-          status: 3,
-          lead: "Nguyen Thanh Dung",
-          protein: 6.0,
-          iron: "7%",
-        },
-        {
-          name: "Cupcake",
-          key: "CC",
-          status: 4,
-          lead: "Le Canh Kieu Oanh",
-          protein: 4.3,
-          iron: "8%",
-        },
-        {
-          name: "Gingerbread",
-          key: "GB",
-          status: 1,
-          lead: "Nguyen Thanh Dung",
-          protein: 3.9,
-          iron: "16%",
-        },
-        {
-          name: "Jelly bean",
-          key: "JB",
-          status: 2,
-          lead: "Le Canh Kieu Oanh",
-          protein: 0.0,
-          iron: "0%",
-        },
-        {
-          name: "Lollipop",
-          key: "LP",
-          status: 3,
-          lead: "Nguyen Thanh Dung",
-          protein: 0,
-          iron: "2%",
-        },
-        {
-          name: "Honeycomb",
-          key: "HC",
-          status: 4,
-          lead: "Le Canh Kieu Oanh",
-          protein: 6.5,
-          iron: "45%",
-        },
-        {
-          name: "Donut",
-          key: "DO",
-          status: 1,
-          lead: "Nguyen Thanh Dung",
-          protein: 4.9,
-          iron: "22%",
-        },
-        {
-          name: "KitKat",
-          key: "KK",
-          status: 2,
-          lead: "Le Canh Kieu Oanh",
-          protein: 7,
-          iron: "6%",
-        },
-      ],
+      projects: [],
     };
   },
 
@@ -186,7 +113,9 @@ export default {
         headers: headers,
       })
       .then((res) => {
-        console.log(res);
+        if (res.data && res.data.projects) {
+          this.projects = res.data.projects;
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -194,34 +123,8 @@ export default {
   },
 
   methods: {
-    getStatus(status) {
-      if (status === 1) {
-        return "Opened";
-      }
-      if (status === 2) {
-        return "In Progress";
-      }
-      if (status === 3) {
-        return "Released";
-      }
-      if (status === 4) {
-        return "Closed";
-      }
-    },
-
-    getStatusClass(status) {
-      if (status === 1) {
-        return "status-1";
-      }
-      if (status === 2) {
-        return "status-2";
-      }
-      if (status === 3) {
-        return "status-3";
-      }
-      if (status === 4) {
-        return "status-4";
-      }
+    editItem(item) {
+      this.$router.push(`/my-project/details/${item.id}`);
     },
   },
 };

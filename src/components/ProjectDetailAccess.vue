@@ -6,9 +6,65 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn small depressed color="primary" to="/my-project/create">
+        <v-btn
+          small
+          depressed
+          color="primary"
+          @click="showAddPeopleDialog = true"
+        >
           Add people
         </v-btn>
+
+        <v-dialog v-model="showAddPeopleDialog" max-width="500px">
+          <v-card class="add-people-form">
+            <v-card-title class="add-people-form-title">
+              Add people
+            </v-card-title>
+            <v-autocomplete
+              v-model="friends"
+              :items="people"
+              filled
+              chips
+              label="Select"
+              item-text="name"
+              return-object
+              multiple
+            >
+              <template v-slot:selection="data">
+                <v-chip
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                  close
+                  @click="data.select"
+                  @click:close="remove(data.item)"
+                >
+                  <v-avatar left>
+                    <v-img src=""></v-img>
+                  </v-avatar>
+                  {{ data.item.name }}
+                </v-chip>
+              </template>
+
+              <template v-slot:item="data">
+                <template>
+                  <v-list-item-avatar size="30">
+                    <img src="@/assets/defaultAvatar2.jpg" />
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ data.item.name }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
+
+            <v-card-actions class="add-people-form-actions">
+              <v-btn @click="showAddPeopleDialog = false">Cancel</v-btn>
+              <v-btn color="primary" @click="submit">Add</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-card-title>
 
       <v-text-field
@@ -26,18 +82,10 @@
       </v-text-field>
 
       <v-data-table :headers="headers" :items="members" :search="search">
-        <!-- <template v-slot:[`item.status`]="{ item }">
-          <div :class="'project-status ' + getStatusClass(item.status)">
-            {{ getStatus(item.status) }}
-          </div>
-        </template> -->
-
-        <!-- <template v-slot:[`item.lead`]="{ item }">
-          <v-avatar size="20" class="mr-2">
-            <img src="@/assets/defaultAvatar2.jpg" />
-          </v-avatar>
-          {{ item.lead }}
-        </template> -->
+        <template v-slot:[`item.role`]="{ item }">
+          <div v-if="item.pivot.role === 1">Lead</div>
+          <div v-else>Member</div>
+        </template>
 
         <template v-slot:[`item.actions`]="{ item }">
           <v-icon x-small @click="deleteItem(item)"> fas fa-trash </v-icon>
@@ -51,9 +99,14 @@
 export default {
   name: "project-detail-access",
 
+  props: {
+    members: Array,
+  },
+
   data() {
     return {
       search: "",
+      showAddPeopleDialog: false,
       headers: [
         {
           text: "Name",
@@ -71,14 +124,64 @@ export default {
           width: "10%",
         },
       ],
-      members: [
-        { name: "Nguyen Thanh Dung", email: "ntdung.dut@gmail.com", role: 1 },
-        { name: "Nguyen Thanh Dung", email: "ntdung.dut@gmail.com", role: 1 },
-        { name: "Nguyen Thanh Dung", email: "ntdung.dut@gmail.com", role: 1 },
-        { name: "Nguyen Thanh Dung", email: "ntdung.dut@gmail.com", role: 1 },
-        { name: "Nguyen Thanh Dung", email: "ntdung.dut@gmail.com", role: 1 },
+      membersClone: [],
+      people: [
+        {
+          name: "Sandra Adams",
+          group: "Group 1",
+          avatar: "@/assets/defaultAvatar2.jpg",
+        },
+        {
+          name: "Ali Connors",
+          group: "Group 1",
+          avatar: "@/assets/defaultAvatar2.jpg",
+        },
+        {
+          name: "Trevor Hansen",
+          group: "Group 1",
+          avatar: "@/assets/defaultAvatar2.jpg",
+        },
+        {
+          name: "Tucker Smith",
+          group: "Group 1",
+          avatar: "@/assets/defaultAvatar2.jpg",
+        },
+        {
+          name: "Britta Holt",
+          group: "Group 2",
+          avatar: "@/assets/defaultAvatar2.jpg",
+        },
+        {
+          name: "Jane Smith ",
+          group: "Group 2",
+          avatar: "@/assets/defaultAvatar2.jpg",
+        },
       ],
+      friends: [],
     };
+  },
+
+  methods: {
+    remove(item) {
+      const index = this.friends.indexOf(item);
+      if (index >= 0) this.friends.splice(index, 1);
+    },
+
+    submit() {
+      console.log(this.friends);
+    },
+  },
+
+  watch: {
+    isUpdating(val) {
+      if (val) {
+        setTimeout(() => (this.isUpdating = false), 3000);
+      }
+    },
+  },
+
+  members() {
+    this.membersClone = this.members;
   },
 };
 </script>
@@ -90,5 +193,22 @@ export default {
 
 .access-search-input {
   width: 25%;
+}
+
+.add-people-form {
+  padding: 20px 15px 20px 15px;
+}
+
+.add-people-form-title {
+  padding: 0px 0px 20px !important;
+}
+
+.add-people-form-actions {
+  justify-content: flex-end;
+}
+
+.v-list-item__title {
+  display: flex;
+  justify-content: flex-start;
 }
 </style>

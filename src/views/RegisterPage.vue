@@ -214,7 +214,8 @@ export default {
 .register-page {
   background-color: white;
   height: 100%;
-  width: 100%;
+  width: 99%;
+  overflow-x: hidden;
 }
 
 .register-form {

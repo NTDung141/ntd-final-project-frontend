@@ -159,7 +159,8 @@ export default {
 .login-page {
   background-color: white;
   height: 100%;
-  width: 100%;
+  width: 99%;
+  overflow-x: hidden;
 }
 
 .login-form {

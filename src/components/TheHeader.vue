@@ -28,7 +28,7 @@
         </div>
 
         <div class="text-center">
-          <v-menu offset-y right>
+          <v-menu offset-y left>
             <template v-slot:activator="{ on, attrs }">
               <v-avatar size="30" v-bind="attrs" v-on="on">
                 <img src="@/assets/defaultAvatar2.jpg" />
@@ -90,6 +90,7 @@ export default {
       Cookies.remove("accessToken");
       Cookies.remove("userInfo");
       this.$router.push("/login");
+      this.logout();
 
       if (accessToken) {
         const headers = {
@@ -104,7 +105,9 @@ export default {
             }
           })
           .catch((err) => {
-            console.log(err);
+            if (err) {
+              this.logout();
+            }
           });
       }
     },
