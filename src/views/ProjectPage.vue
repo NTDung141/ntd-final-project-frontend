@@ -1,6 +1,6 @@
 <template>
   <div class="project-page">
-    <TheSideBar />
+    <TheSideBar :projectId="projectId" />
   </div>
 </template>
 
@@ -8,6 +8,12 @@
 import TheSideBar from "@/components/TheSideBar.vue";
 export default {
   name: "project-page",
+
+  data() {
+    return {
+      projectId: this.$route.params.id,
+    };
+  },
 
   components: {
     TheSideBar,

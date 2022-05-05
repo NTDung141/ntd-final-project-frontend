@@ -173,7 +173,7 @@ export default {
         };
 
         axios
-          .post("http://127.0.0.1:8000/api/auth/project/create", data, {
+          .post("http://127.0.0.1:8000/api/project/create", data, {
             headers: headers,
           })
           .then((res) => {

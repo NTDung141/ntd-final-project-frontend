@@ -1,6 +1,6 @@
 <template>
   <div class="project-detail-page">
-    <ProjectDetail :project="project" />
+    <ProjectDetail :project="project" @change-name-and-key="changeNameAndKey" />
 
     <ProjectDetailAccess :members="project.users" />
 
@@ -39,7 +39,7 @@ export default {
     };
 
     axios
-      .get(`http://127.0.0.1:8000/api/auth/project/${this.projectId}`, {
+      .get(`http://127.0.0.1:8000/api/project/${this.projectId}`, {
         headers: headers,
       })
       .then((res) => {
@@ -51,6 +51,14 @@ export default {
       .catch((err) => {
         console.log(err);
       });
+  },
+
+  methods: {
+    changeNameAndKey(newName, newKey) {
+      this.project.name = newName;
+      this.project.key = newKey;
+      console.log(this.project);
+    },
   },
 };
 </script>

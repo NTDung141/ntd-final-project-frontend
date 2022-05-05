@@ -109,7 +109,7 @@ export default {
     };
 
     axios
-      .get("http://127.0.0.1:8000/api/auth/project/get-all", {
+      .get("http://127.0.0.1:8000/api/project/get-all", {
         headers: headers,
       })
       .then((res) => {

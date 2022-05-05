@@ -47,11 +47,15 @@
 </template>
 
 <script>
+import axios from "axios";
+import Cookies from "js-cookie";
+
 export default {
   name: "project-detail",
 
   data() {
     return {
+      projectId: "",
       projectName: "",
       projectKey: "",
       formValid: true,
@@ -93,7 +97,38 @@ export default {
     },
 
     submit() {
-      // write axios
+      const accessToken = Cookies.get("accessToken");
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      const formData = new FormData();
+      formData.append("id", this.projectId);
+      formData.append("name", this.projectName);
+      formData.append("key", this.projectKey);
+
+      axios
+        .post(
+          `http://127.0.0.1:8000/api/project/update/name-key/${this.projectId}`,
+          formData,
+          {
+            headers: headers,
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          if (res.data && res.data.updatedProject) {
+            const updatedProject = res.data.updatedProject;
+            this.changeNameAndKey(updatedProject.name, updatedProject.key);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    changeNameAndKey(newName, newKey) {
+      this.$emit("change-name-and-key", newName, newKey);
     },
   },
 
@@ -115,6 +150,7 @@ export default {
     project() {
       this.projectName = this.project.name;
       this.projectKey = this.project.key;
+      this.projectId = this.project.id;
     },
   },
 };

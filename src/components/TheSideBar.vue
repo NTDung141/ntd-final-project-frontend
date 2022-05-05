@@ -67,7 +67,7 @@
       @click="goToProjectDetail"
     >
       <template v-slot:activator>
-        <v-list-item-content :to="`/my-project/details/3`">
+        <v-list-item-content :to="`/my-project/details/${projectId}`">
           <v-list-item-title> Project Setting </v-list-item-title>
         </v-list-item-content>
       </template>
@@ -78,6 +78,14 @@
 <script>
 export default {
   name: "the-side-bar",
+
+  props: {
+    projectId: String,
+  },
+
+  mounted() {
+    console.log(this.projectId);
+  },
 
   data() {
     return {
