@@ -6,12 +6,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn
-          small
-          depressed
-          color="primary"
-          @click="showAddPeopleDialog = true"
-        >
+        <v-btn small depressed color="primary" @click="openDialog">
           Add people
         </v-btn>
 
@@ -61,7 +56,12 @@
 
             <v-card-actions class="add-people-form-actions">
               <v-btn @click="showAddPeopleDialog = false">Cancel</v-btn>
-              <v-btn color="primary" @click="submit">Add</v-btn>
+              <v-btn
+                color="primary"
+                :loading="saveButtonLoading"
+                @click="submit"
+                >Add</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -81,7 +81,7 @@
         </template>
       </v-text-field>
 
-      <v-data-table :headers="headers" :items="members" :search="search">
+      <v-data-table :headers="headers" :items="project.users" :search="search">
         <template v-slot:[`item.role`]="{ item }">
           <div v-if="item.pivot.role === 1">Lead</div>
           <div v-else>Member</div>
@@ -96,16 +96,20 @@
 </template>
 
 <script>
+import axios from "axios";
+import Cookies from "js-cookie";
+
 export default {
   name: "project-detail-access",
 
   props: {
-    members: Array,
+    project: Object,
   },
 
   data() {
     return {
       search: "",
+      saveButtonLoading: false,
       showAddPeopleDialog: false,
       headers: [
         {
@@ -124,7 +128,6 @@ export default {
           width: "10%",
         },
       ],
-      membersClone: [],
       people: [
         {
           name: "Sandra Adams",
@@ -167,8 +170,73 @@ export default {
       if (index >= 0) this.friends.splice(index, 1);
     },
 
+    openDialog() {
+      this.showAddPeopleDialog = true;
+      this.loadPeopleList();
+    },
+
+    loadPeopleList() {
+      const accessToken = Cookies.get("accessToken");
+
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      axios
+        .get("http://127.0.0.1:8000/api/auth/get-all", {
+          headers: headers,
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.data && res.data.users) {
+            this.people = res.data.users;
+
+            for (var i = 0; i < this.people.length; i++) {
+              const personId = this.people[i].id;
+
+              let personIndex = this.project.users.findIndex(
+                (person) => person.id === personId
+              );
+
+              if (personIndex !== -1) {
+                this.people.splice(i, 1);
+                i--;
+              }
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
     submit() {
-      console.log(this.friends);
+      this.saveButtonLoading = true;
+
+      const accessToken = Cookies.get("accessToken");
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      const formData = new FormData();
+      formData.append("projectId", this.project.id);
+      formData.append("people", JSON.stringify(this.friends));
+
+      axios
+        .post(`http://127.0.0.1:8000/api/project/update/add-people`, formData, {
+          headers: headers,
+        })
+        .then((res) => {
+          console.log(res);
+          this.showAddPeopleDialog = false;
+          this.saveButtonLoading = false;
+          if (res.data && res.data.project) {
+            this.$emit("update-project", res.data.project);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 
@@ -178,10 +246,6 @@ export default {
         setTimeout(() => (this.isUpdating = false), 3000);
       }
     },
-  },
-
-  members() {
-    this.membersClone = this.members;
   },
 };
 </script>

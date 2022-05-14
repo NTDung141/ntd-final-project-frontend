@@ -108,13 +108,9 @@ export default {
       formData.append("key", this.projectKey);
 
       axios
-        .post(
-          `http://127.0.0.1:8000/api/project/update/name-key/${this.projectId}`,
-          formData,
-          {
-            headers: headers,
-          }
-        )
+        .post(`http://127.0.0.1:8000/api/project/update/name-key`, formData, {
+          headers: headers,
+        })
         .then((res) => {
           console.log(res);
           if (res.data && res.data.updatedProject) {

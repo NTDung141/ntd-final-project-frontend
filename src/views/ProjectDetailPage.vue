@@ -2,7 +2,7 @@
   <div class="project-detail-page">
     <ProjectDetail :project="project" @change-name-and-key="changeNameAndKey" />
 
-    <ProjectDetailAccess :members="project.users" />
+    <ProjectDetailAccess :project="project" @update-project="updateProject" />
 
     <ProjectDetailSprint />
   </div>
@@ -58,6 +58,10 @@ export default {
       this.project.name = newName;
       this.project.key = newKey;
       console.log(this.project);
+    },
+
+    updateProject(project) {
+      this.project = project;
     },
   },
 };

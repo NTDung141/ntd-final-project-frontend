@@ -67,7 +67,7 @@
       @click="goToProjectDetail"
     >
       <template v-slot:activator>
-        <v-list-item-content :to="`/my-project/details/${projectId}`">
+        <v-list-item-content>
           <v-list-item-title> Project Setting </v-list-item-title>
         </v-list-item-content>
       </template>
@@ -125,7 +125,7 @@ export default {
     },
 
     goToProjectDetail() {
-      this.$router.push("/my-project/details/3");
+      this.$router.push(`/my-project/details/${this.projectId}`);
     },
   },
 };
