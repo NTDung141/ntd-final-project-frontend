@@ -30,15 +30,13 @@
 
       <v-list-group
         class="sidebar-sprint"
-        v-for="sprint in sprints"
-        :key="sprint.title"
         prepend-icon="fas fa-repeat"
         append-icon="fas fa-caret-down"
         color="primary"
       >
         <template v-slot:activator>
           <v-list-item-content>
-            <v-list-item-title>{{ sprint.name }}</v-list-item-title>
+            <v-list-item-title>Active Sprint</v-list-item-title>
           </v-list-item-content>
         </template>
 
@@ -60,12 +58,34 @@
         </v-list-item-group>
       </v-list-group>
     </v-list>
+
+    <v-divider></v-divider>
+
+    <v-list-group
+      prepend-icon="fas fa-cog"
+      append-icon=""
+      @click="goToProjectDetail"
+    >
+      <template v-slot:activator>
+        <v-list-item-content>
+          <v-list-item-title> Project Setting </v-list-item-title>
+        </v-list-item-content>
+      </template>
+    </v-list-group>
   </v-navigation-drawer>
 </template>
 
 <script>
 export default {
   name: "the-side-bar",
+
+  props: {
+    projectId: String,
+  },
+
+  mounted() {
+    console.log(this.projectId);
+  },
 
   data() {
     return {
@@ -102,6 +122,10 @@ export default {
       } else {
         this.showingSprintId = id;
       }
+    },
+
+    goToProjectDetail() {
+      this.$router.push(`/my-project/details/${this.projectId}`);
     },
   },
 };
