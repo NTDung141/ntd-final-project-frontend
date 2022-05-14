@@ -1,7 +1,5 @@
 <template>
   <div class="hello">
-    <the-side-bar />
-
     <div class="hello-content">
       <h1>{{ msg }}</h1>
       <p>
@@ -97,14 +95,10 @@
 </template>
 
 <script>
-import TheSideBar from "@/components/TheSideBar.vue";
 export default {
   name: "HelloWorld",
   props: {
     msg: String,
-  },
-  components: {
-    TheSideBar,
   },
 };
 </script>
@@ -128,6 +122,8 @@ a {
 
 .hello {
   display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100%;
 }
 

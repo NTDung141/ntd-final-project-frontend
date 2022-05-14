@@ -1,14 +1,13 @@
 <template>
-  <div>
+  <div class="my-header">
     <v-toolbar class="my-toolbar">
       <span class="hidden-sm-and-up">
         <i class="fas fa-bars" @click="sidebar = !sidebar"></i>
       </span>
 
       <v-tabs class="hidden-xs-only">
-        <v-tab v-for="item in menuItems" :key="item.title" :to="item.path">
-          {{ item.title }}
-        </v-tab>
+        <v-tab to="/"> Home </v-tab>
+        <v-tab to="/my-project" v-if="userInfo.email"> My project </v-tab>
       </v-tabs>
 
       <v-spacer></v-spacer>
@@ -29,7 +28,7 @@
         </div>
 
         <div class="text-center">
-          <v-menu offset-y right>
+          <v-menu offset-y left>
             <template v-slot:activator="{ on, attrs }">
               <v-avatar size="30" v-bind="attrs" v-on="on">
                 <img src="@/assets/defaultAvatar2.jpg" />
@@ -71,11 +70,6 @@ export default {
 
   data() {
     return {
-      menuItems: [
-        { title: "Home", path: "/" },
-        { title: "My project", path: "/my-project" },
-      ],
-
       sideBar: true,
 
       items: [
@@ -93,6 +87,11 @@ export default {
     onLogout() {
       const accessToken = Cookies.get("accessToken");
 
+      Cookies.remove("accessToken");
+      Cookies.remove("userInfo");
+      this.$router.push("/login");
+      this.logout();
+
       if (accessToken) {
         const headers = {
           Authorization: `Bearer ${accessToken}`,
@@ -106,13 +105,11 @@ export default {
             }
           })
           .catch((err) => {
-            console.log(err);
+            if (err) {
+              this.logout();
+            }
           });
       }
-
-      Cookies.remove("accessToken");
-      Cookies.remove("userInfo");
-      this.$router.push("/login");
     },
   },
 };
@@ -120,6 +117,9 @@ export default {
 
 
 <style scoped>
+.my-header {
+  z-index: 3;
+}
 .my-toolbar {
   padding: 0px 20%;
 }

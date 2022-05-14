@@ -13,6 +13,7 @@
           required
           @input="$v.email.$touch()"
           @blur="$v.email.$touch()"
+          @keyup.enter="submitLogin"
         ></v-text-field>
 
         <v-text-field
@@ -27,6 +28,7 @@
           required
           @input="$v.password.$touch()"
           @blur="$v.password.$touch()"
+          @keyup.enter="submitLogin"
         ></v-text-field>
 
         <v-btn
@@ -157,7 +159,8 @@ export default {
 .login-page {
   background-color: white;
   height: 100%;
-  width: 100%;
+  width: 99%;
+  overflow-x: hidden;
 }
 
 .login-form {

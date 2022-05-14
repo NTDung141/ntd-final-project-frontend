@@ -13,31 +13,25 @@ import TheHeader from "./components/TheHeader.vue";
 import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
 import { mapActions } from "vuex";
 import Cookies from "js-cookie";
-// import TheSideBar from "@/components/TheSideBar.vue";
 
 export default {
   name: "App",
 
   components: {
     TheHeader,
-    // TheSideBar,
   },
 
   methods: {
     ...mapActions({ login: AUTHENTICATION_ACTIONS.login }),
   },
 
-  beforeMount() {
-    const userInfo = Cookies.get("userInfo");
+  created() {
+    const userInfo = JSON.parse(Cookies.get("userInfo"));
 
     if (userInfo) {
-      this.login(JSON.parse(userInfo));
+      this.login(userInfo);
     } else {
-      const currentRouteName = this.$router.currentRoute.fullPath;
-
-      if (currentRouteName !== "/login" && currentRouteName !== "/register") {
-        this.$router.push("/login");
-      }
+      this.$router.push("/login");
     }
   },
 };

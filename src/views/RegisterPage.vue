@@ -1,65 +1,5 @@
 <template>
   <div class="register-page">
-    <!-- <div class="register-form">
-      <div class="mb-3">
-        <div class="register-form-title">Sign up</div>
-      </div>
-
-      <div class="mb-3">
-        <label class="register-form-label">Name</label>
-        <input
-          type="text"
-          class="form-control register-input"
-          maxlength="50"
-          v-model="registerValue.name"
-        />
-      </div>
-
-      <div class="mb-3">
-        <label class="register-form-label">Email address</label>
-        <input
-          type="email"
-          class="form-control register-input"
-          maxlength="50"
-          v-model="registerValue.email"
-        />
-      </div>
-
-      <div class="mb-3">
-        <label class="register-form-label">Password</label>
-        <input
-          type="password"
-          class="form-control register-input"
-          maxlength="50"
-          v-model="registerValue.password"
-        />
-      </div>
-
-      <div class="mb-3">
-        <label class="register-form-label">Confirm Password</label>
-        <input
-          type="password"
-          class="form-control register-input"
-          maxlength="50"
-          v-model="registerValue.confirmPassword"
-        />
-      </div>
-
-      <div v-if="this.error" class="alert alert-danger" role="alert">
-        <div class="register-form-error">
-          {{ this.error }}
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        class="btn btn-primary register-button"
-        @click="submitRegister"
-      >
-        Sign up
-      </button>
-    </div> -->
-
     <form>
       <v-card class="register-form" elevation="5">
         <v-card-title class="register-form-title">Sign up</v-card-title>
@@ -73,6 +13,7 @@
           required
           @input="$v.name.$touch()"
           @blur="$v.name.$touch()"
+          @keyup.enter="submitRegister"
         ></v-text-field>
 
         <v-text-field
@@ -84,6 +25,7 @@
           required
           @input="$v.email.$touch()"
           @blur="$v.email.$touch()"
+          @keyup.enter="submitRegister"
         ></v-text-field>
 
         <v-text-field
@@ -98,6 +40,7 @@
           required
           @input="$v.password.$touch()"
           @blur="$v.password.$touch()"
+          @keyup.enter="submitRegister"
         ></v-text-field>
 
         <v-text-field
@@ -114,6 +57,7 @@
           required
           @input="$v.confirmPassword.$touch()"
           @blur="$v.confirmPassword.$touch()"
+          @keyup.enter="submitRegister"
         ></v-text-field>
 
         <v-btn
@@ -270,7 +214,8 @@ export default {
 .register-page {
   background-color: white;
   height: 100%;
-  width: 100%;
+  width: 99%;
+  overflow-x: hidden;
 }
 
 .register-form {
