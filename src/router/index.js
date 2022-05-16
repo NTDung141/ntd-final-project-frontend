@@ -7,6 +7,7 @@ import ProjectsPage from '../views/ProjectsPage.vue'
 import ProjectDetailPage from '../views/ProjectDetailPage.vue'
 import ProjectPage from '../views/ProjectPage.vue'
 import Cookies from "js-cookie";
+import ProjectBacklog from '../components/ProjectBacklog.vue'
 
 Vue.use(VueRouter)
 
@@ -25,8 +26,16 @@ const routes = [
   { path: "/login", component: LoginPage },
   { path: "/register", component: RegisterPage },
   { path: "/my-project", component: ProjectsPage, beforeEnter: beforeEnter },
-  { path: "/my-project/:id", component: ProjectPage, beforeEnter: beforeEnter },
-  { path: "/my-project/details/:id", component: ProjectDetailPage, beforeEnter: beforeEnter }
+  {
+    path: "/my-project/:id",
+    component: ProjectPage,
+    name: 'project',
+    children: [
+      { path: "", component: ProjectBacklog }
+    ],
+    beforeEnter: beforeEnter
+  },
+  { path: "/my-project/settings/:id", component: ProjectDetailPage, beforeEnter: beforeEnter }
 ]
 
 export const router = new VueRouter({

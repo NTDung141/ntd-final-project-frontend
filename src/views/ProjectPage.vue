@@ -1,6 +1,8 @@
 <template>
   <div class="project-page">
     <TheSideBar :projectId="projectId" />
+
+    <router-view></router-view>
   </div>
 </template>
 
@@ -23,6 +25,7 @@ export default {
 
 <style scoped>
 .project-page {
+  display: flex;
   width: 100%;
   height: 100%;
 }

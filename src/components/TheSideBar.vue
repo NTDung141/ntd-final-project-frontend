@@ -20,7 +20,11 @@
     <v-divider></v-divider>
 
     <v-list dense>
-      <v-list-group prepend-icon="far fa-list-alt" append-icon="">
+      <v-list-group
+        prepend-icon="far fa-list-alt"
+        append-icon=""
+        @click="goToProjectBacklog"
+      >
         <template v-slot:activator>
           <v-list-item-content>
             <v-list-item-title>Product Backlog</v-list-item-title>
@@ -125,7 +129,11 @@ export default {
     },
 
     goToProjectDetail() {
-      this.$router.push(`/my-project/details/${this.projectId}`);
+      this.$router.push(`/my-project/settings/${this.projectId}`);
+    },
+
+    goToProjectBacklog() {
+      this.$router.push(`/my-project/${this.projectId}`);
     },
   },
 };

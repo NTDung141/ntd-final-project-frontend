@@ -54,4 +54,13 @@ export default {
 .wrapper {
   height: 100%;
 }
+
+.project-link {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 15px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
 </style>
