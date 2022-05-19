@@ -1,9 +1,8 @@
 import Cookies from "js-cookie";
 
-const accessToken = Cookies.get("accessToken");
-
-const authHeader = {
-    Authorization: `Bearer ${accessToken}`,
+let authHeader = () => {
+    let accessToken = Cookies.get("accessToken");
+    return { Authorization: `Bearer ${accessToken}` }
 };
 
 export const CookieService = {

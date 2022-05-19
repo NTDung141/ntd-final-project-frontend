@@ -11,7 +11,11 @@
       v-for="sprint in project.sprints"
       :key="sprint.name"
       :sprint="sprint"
-      :disableBtn="isDisableStartSprintBtn"
+      :disableBtn="Boolean(isDisableStartSprintBtn())"
+      @start-sprint="startSprint"
+      @delete-sprint="deleteSprint"
+      @complete-sprint="completeSprint"
+      @update-sprint="updateSprint"
     />
 
     <ProjectBacklogList @create-sprint="createSprint" />
@@ -47,7 +51,6 @@ export default {
   },
 
   beforeMount() {
-    console.log(this.projectId);
     const accessToken = Cookies.get("accessToken");
     const headers = {
       Authorization: `Bearer ${accessToken}`,
@@ -58,7 +61,6 @@ export default {
         headers: headers,
       })
       .then((res) => {
-        console.log(res);
         if (res.data && res.data.project) {
           this.project = res.data.project;
         }
@@ -68,29 +70,29 @@ export default {
       });
   },
 
-  computed: {
+  methods: {
     isDisableStartSprintBtn() {
-      this.sprints.forEach((sprint) => {
+      let isDisable = false;
+      this.project.sprints.forEach((sprint) => {
         if (sprint.status === 2) {
-          return true;
+          isDisable = true;
         }
       });
-      return false;
+      return isDisable;
     },
-  },
 
-  methods: {
     createSprint() {
       const formData = new FormData();
       formData.append("name", this.createNewSprintName());
       formData.append("project_id", this.projectId);
       axios
         .post(SPRINT_API.createApi, formData, {
-          headers: CookieService.authHeader,
+          headers: CookieService.authHeader(),
         })
         .then((res) => {
           if (res.data && res.data.project) {
             this.project = res.data.project;
+            this.isDisableStartSprintBtn();
           }
         })
         .catch((err) => {
@@ -112,6 +114,77 @@ export default {
           return "Sprint " + newSprintNumber;
         }
       }
+    },
+
+    startSprint(id) {
+      axios
+        .post(SPRINT_API.startSprintApi(id), null, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.project = res.data.project;
+            this.isDisableStartSprintBtn();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    completeSprint(id) {
+      axios
+        .post(SPRINT_API.compeleteSprintApi(id), null, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.project = res.data.project;
+            this.isDisableStartSprintBtn();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    deleteSprint(id) {
+      axios
+        .delete(SPRINT_API.deleteSprintApi(id), {
+          headers: CookieService.authHeader(),
+          data: {},
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.project = res.data.project;
+            this.isDisableStartSprintBtn();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    updateSprint(data) {
+      const formData = new FormData();
+      formData.append("id", data.id);
+      formData.append("name", data.name);
+      formData.append("start_date", data.startDate);
+      formData.append("end_date", data.endDate);
+      for (var value of formData.values()) {
+        console.log(value);
+      }
+
+      axios
+        .post(SPRINT_API.updateApi, formData, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };

@@ -87,10 +87,6 @@ export default {
     projectId: String,
   },
 
-  mounted() {
-    console.log(this.projectId);
-  },
-
   data() {
     return {
       isShowSidebar: true,
