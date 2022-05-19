@@ -124,7 +124,7 @@ export default {
 
   methods: {
     editItem(item) {
-      this.$router.push(`/my-project/details/${item.id}`);
+      this.$router.push(`/my-project/settings/${item.id}`);
     },
   },
 };
