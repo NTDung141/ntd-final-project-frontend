@@ -46,6 +46,12 @@
         </div>
       </v-card-title>
 
+      <div class="empty-task-item" v-if="tasks.length < 1">
+        There are no issues in this sprint
+      </div>
+
+      <ProjectTaskItem v-for="task in tasks" :key="task.id" :task="task" />
+
       <v-card-actions v-if="sprint.status !== 3">
         <v-btn small text class="project-sprint-item-create-task">
           <i class="fas fa-plus mr-2"></i>
@@ -170,8 +176,14 @@
 </template>
 
 <script>
+import ProjectTaskItem from "@/components/ProjectTaskItem.vue";
+
 export default {
   name: "project-sprint-item",
+
+  components: {
+    ProjectTaskItem,
+  },
 
   props: {
     sprint: Object,
@@ -184,13 +196,25 @@ export default {
       showDeleteSprintDialog: false,
       menuStartDate: false,
       menuEndDate: false,
-      startDate: new Date().toISOString().slice(0, 10),
-      endDate: new Date().toISOString().slice(0, 10),
+      startDate: this.sprint.start_date
+        ? this.sprint.start_date.slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
+      endDate: this.sprint.end_date
+        ? this.sprint.end_date.slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
       sprintName: this.sprint.name,
       nameRules: [
         (value) => !!value || "Name is required.",
         (value) => (value && value.length <= 50) || "Max 50 characters",
       ],
+
+      tasks: [
+        { id: 1, key: "PJ-1", name: "Task 1", status: 1 },
+        { id: 2, key: "PJ-2", name: "Task 2", status: 1 },
+        { id: 3, key: "PJ-3", name: "Task 3", status: 1 },
+        { id: 4, key: "PJ-4", name: "Task 4", status: 1 },
+      ],
+      // tasks: [],
     };
   },
 
@@ -247,6 +271,7 @@ export default {
   width: 100%;
   background: #f4f5f7 !important;
   border-radius: 5px;
+  padding: 0px 10px;
 }
 
 .project-sprint-item-title {
@@ -303,5 +328,17 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+
+.empty-task-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+  min-height: 40px;
+  border: 2px dashed #dfe1e6;
+  border-radius: 3px;
+  font-size: 14px;
+  color: #6b778c;
 }
 </style>

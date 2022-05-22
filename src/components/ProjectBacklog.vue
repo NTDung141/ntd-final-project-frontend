@@ -42,11 +42,6 @@ export default {
     return {
       projectId: this.$route.params.id,
       project: {},
-      sprints: [
-        { id: 1, name: "Sprint 1", status: 2 },
-        { id: 2, name: "Sprint 2", status: 1 },
-        { id: 3, name: "25 Sprint 32", status: 1 },
-      ],
     };
   },
 
@@ -196,5 +191,6 @@ export default {
   height: 100%;
   padding: 20px 30px;
   overflow-x: hidden;
+  margin-bottom: 30px;
 }
 </style>
