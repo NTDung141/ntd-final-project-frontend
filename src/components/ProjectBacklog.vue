@@ -12,10 +12,14 @@
       :key="sprint.name"
       :sprint="sprint"
       :disableBtn="Boolean(isDisableStartSprintBtn())"
+      :projectKey="project.key"
+      :projectId="project.id"
       @start-sprint="startSprint"
       @delete-sprint="deleteSprint"
       @complete-sprint="completeSprint"
       @update-sprint="updateSprint"
+      @update-project-after-action="updateProjectAfterAction"
+      @create-task="createTask"
     />
 
     <ProjectBacklogList @create-sprint="createSprint" />
@@ -29,6 +33,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { SPRINT_API } from "@/factories/sprint.js";
 import { CookieService } from "@/services/CookieService.js";
+import { TASK_API } from "@/factories/task.js";
 
 export default {
   name: "project-backlog",
@@ -176,6 +181,29 @@ export default {
         })
         .then((res) => {
           console.log(res);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
+    },
+
+    updateProjectAfterAction(project) {
+      console.log("project level");
+      console.log(project);
+      this.project = project;
+    },
+
+    createTask(newTask) {
+      axios
+        .post(TASK_API.createApi, newTask, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.project = res.data.project;
+            console.log(res.data.project);
+            this.show = false;
+          }
         })
         .catch((err) => {
           console.log(err);

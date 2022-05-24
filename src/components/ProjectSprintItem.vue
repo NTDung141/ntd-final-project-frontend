@@ -2,12 +2,12 @@
   <div class="project-sprint">
     <v-card elevation="0" class="project-sprint-item">
       <v-card-title>
-        <div class="project-sprint-item-title">{{ sprint.name }}</div>
+        <div class="project-sprint-item-title">{{ sprintData.name }}</div>
 
         <v-spacer></v-spacer>
 
         <v-btn
-          v-if="sprint.status === 1"
+          v-if="sprintData.status === 1"
           small
           depressed
           color="grey lighten-2"
@@ -18,7 +18,7 @@
           Start Sprint
         </v-btn>
         <v-btn
-          v-if="sprint.status === 2"
+          v-if="sprintData.status === 2"
           small
           depressed
           color="grey lighten-2"
@@ -27,7 +27,7 @@
         >
           Complete Sprint
         </v-btn>
-        <div v-if="sprint.status === 3" class="project-sprint-completed">
+        <div v-if="sprintData.status === 3" class="project-sprint-completed">
           Completed
         </div>
 
@@ -52,13 +52,27 @@
 
       <ProjectTaskItem v-for="task in tasks" :key="task.id" :task="task" />
 
-      <v-card-actions v-if="sprint.status !== 3">
-        <v-btn small text class="project-sprint-item-create-task">
+      <v-card-actions v-if="sprintData.status !== 3">
+        <v-btn
+          small
+          text
+          class="project-sprint-item-create-task"
+          @click="showCreateTaskDialog = true"
+        >
           <i class="fas fa-plus mr-2"></i>
           Create issue
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <ProjectTaskItemCreate
+      v-model="showCreateTaskDialog"
+      :projectKey="projectKey"
+      :projectId="projectId"
+      :sprintId="sprintData.id"
+      @update-project-after-action="updateProjectAfterAction"
+      @create-task="createTask"
+    />
 
     <v-dialog v-model="showEditSprintDialog" max-width="500px">
       <v-card elevation="0">
@@ -177,21 +191,27 @@
 
 <script>
 import ProjectTaskItem from "@/components/ProjectTaskItem.vue";
+import ProjectTaskItemCreate from "@/components/ProjectTaskItemCreate.vue";
+import { integer } from "vuelidate/lib/validators";
 
 export default {
   name: "project-sprint-item",
 
   components: {
     ProjectTaskItem,
+    ProjectTaskItemCreate,
   },
 
   props: {
     sprint: Object,
     disableBtn: Boolean,
+    projectKey: String,
+    projectId: integer,
   },
 
   data() {
     return {
+      sprintData: this.sprint,
       showEditSprintDialog: false,
       showDeleteSprintDialog: false,
       menuStartDate: false,
@@ -208,13 +228,14 @@ export default {
         (value) => (value && value.length <= 50) || "Max 50 characters",
       ],
 
-      tasks: [
-        { id: 1, key: "PJ-1", name: "Task 1", status: 1 },
-        { id: 2, key: "PJ-2", name: "Task 2", status: 1 },
-        { id: 3, key: "PJ-3", name: "Task 3", status: 1 },
-        { id: 4, key: "PJ-4", name: "Task 4", status: 1 },
-      ],
-      // tasks: [],
+      // tasks: [
+      //   { id: 1, key: "PJ-1", name: "Task 1", status: 1 },
+      //   { id: 2, key: "PJ-2", name: "Task 2", status: 1 },
+      //   { id: 3, key: "PJ-3", name: "Task 3", status: 1 },
+      //   { id: 4, key: "PJ-4", name: "Task 4", status: 1 },
+      // ],
+      tasks: this.sprint.tasks,
+      showCreateTaskDialog: false,
     };
   },
 
@@ -258,6 +279,19 @@ export default {
       this.startDate = this.sprint.startDate;
       this.endDate = this.sprint.endDate;
     },
+
+    updateProjectAfterAction(project) {
+      console.log("sprint level");
+      this.$emit("update-project-after-action", project);
+    },
+
+    createTask(newTask) {
+      this.$emit("create-task", newTask);
+    },
+  },
+
+  updated() {
+    this.sprintData = this.sprint;
   },
 };
 </script>
@@ -271,7 +305,7 @@ export default {
   width: 100%;
   background: #f4f5f7 !important;
   border-radius: 5px;
-  padding: 0px 10px;
+  padding: 0px 10px 20px 10px;
 }
 
 .project-sprint-item-title {
