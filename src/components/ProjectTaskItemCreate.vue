@@ -3,7 +3,7 @@
     <v-card elevation="0">
       <v-card-title> Create Task </v-card-title>
 
-      <v-form>
+      <v-form v-model="formValid" @submit.prevent="createTask">
         <v-card-text>
           <div class="project-task-dialog-label">
             Name
@@ -13,6 +13,7 @@
           <v-text-field
             v-model="taskName"
             :rules="nameRules"
+            @keyup.enter="createTask"
             dense
             outlined
           ></v-text-field>
@@ -21,7 +22,9 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="createTask"> Save </v-btn>
+        <v-btn color="primary" type="submit" :disabled="!this.formValid">
+          Save
+        </v-btn>
 
         <v-btn @click="show = false"> Cancel </v-btn>
       </v-card-actions>
@@ -30,9 +33,6 @@
 </template>
 
 <script>
-// import axios from "axios";
-// import { TASK_API } from "@/factories/task.js";
-// import { CookieService } from "@/services/CookieService.js";
 import { integer } from "vuelidate/lib/validators";
 
 export default {
@@ -52,6 +52,7 @@ export default {
         (value) => !!value || "Name is required.",
         (value) => (value && value.length <= 100) || "Max 100 characters",
       ],
+      formValid: true,
     };
   },
 
@@ -73,25 +74,9 @@ export default {
       newTask.append("key", this.projectKey);
       newTask.append("sprint_id", this.sprintId);
       newTask.append("project_id", this.projectId);
-      // axios
-      //   .post(TASK_API.createApi, newTask, {
-      //     headers: CookieService.authHeader(),
-      //   })
-      //   .then((res) => {
-      //     if (res.data && res.data.project) {
-      //       this.updateProjectAfterAction(res.data.project);
-      //       this.show = false;
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-      this.show = false;
       this.$emit("create-task", newTask);
-    },
-
-    updateProjectAfterAction(project) {
-      this.$emit("update-project-after-action", project);
+      this.show = false;
+      this.taskName = "";
     },
   },
 };

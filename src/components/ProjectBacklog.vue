@@ -9,7 +9,7 @@
     </div>
     <ProjectSprintItem
       v-for="sprint in project.sprints"
-      :key="sprint.name"
+      :key="sprint.id"
       :sprint="sprint"
       :disableBtn="Boolean(isDisableStartSprintBtn())"
       :projectKey="project.key"
@@ -33,7 +33,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { SPRINT_API } from "@/factories/sprint.js";
 import { CookieService } from "@/services/CookieService.js";
-import { TASK_API } from "@/factories/task.js";
+import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
+import { mapActions } from "vuex";
+import { mapGetters } from "vuex";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 
 export default {
   name: "project-backlog",
@@ -43,10 +46,16 @@ export default {
     ProjectSprintItem,
   },
 
+  computed: {
+    ...mapGetters({
+      project: PROJECT_GETTERS.project,
+    }),
+  },
+
   data() {
     return {
       projectId: this.$route.params.id,
-      project: {},
+      // project: {},
     };
   },
 
@@ -63,6 +72,7 @@ export default {
       .then((res) => {
         if (res.data && res.data.project) {
           this.project = res.data.project;
+          this.updateProject(res.data.project);
         }
       })
       .catch((err) => {
@@ -71,6 +81,8 @@ export default {
   },
 
   methods: {
+    ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+
     isDisableStartSprintBtn() {
       let isDisable = false;
       this.project.sprints.forEach((sprint) => {
@@ -91,7 +103,7 @@ export default {
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            this.project = res.data.project;
+            this.updateProject(res.data.project);
             this.isDisableStartSprintBtn();
           }
         })
@@ -123,7 +135,7 @@ export default {
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            this.project = res.data.project;
+            this.updateProject(res.data.project);
             this.isDisableStartSprintBtn();
           }
         })
@@ -139,70 +151,8 @@ export default {
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            this.project = res.data.project;
+            this.updateProject(res.data.project);
             this.isDisableStartSprintBtn();
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
-    deleteSprint(id) {
-      axios
-        .delete(SPRINT_API.deleteSprintApi(id), {
-          headers: CookieService.authHeader(),
-          data: {},
-        })
-        .then((res) => {
-          if (res.data && res.data.project) {
-            this.project = res.data.project;
-            this.isDisableStartSprintBtn();
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
-    updateSprint(data) {
-      const formData = new FormData();
-      formData.append("id", data.id);
-      formData.append("name", data.name);
-      formData.append("start_date", data.startDate);
-      formData.append("end_date", data.endDate);
-      for (var value of formData.values()) {
-        console.log(value);
-      }
-
-      axios
-        .post(SPRINT_API.updateApi, formData, {
-          headers: CookieService.authHeader(),
-        })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err.response.data);
-        });
-    },
-
-    updateProjectAfterAction(project) {
-      console.log("project level");
-      console.log(project);
-      this.project = project;
-    },
-
-    createTask(newTask) {
-      axios
-        .post(TASK_API.createApi, newTask, {
-          headers: CookieService.authHeader(),
-        })
-        .then((res) => {
-          if (res.data && res.data.project) {
-            this.project = res.data.project;
-            console.log(res.data.project);
-            this.show = false;
           }
         })
         .catch((err) => {
