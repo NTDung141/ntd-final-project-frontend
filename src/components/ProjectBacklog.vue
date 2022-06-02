@@ -15,11 +15,7 @@
       :projectKey="project.key"
       :projectId="project.id"
       @start-sprint="startSprint"
-      @delete-sprint="deleteSprint"
       @complete-sprint="completeSprint"
-      @update-sprint="updateSprint"
-      @update-project-after-action="updateProjectAfterAction"
-      @create-task="createTask"
     />
 
     <ProjectBacklogList @create-sprint="createSprint" />
@@ -167,7 +163,7 @@ export default {
 .project-backlog {
   width: 96%;
   height: 100%;
-  padding: 20px 30px;
+  padding: 20px 30px 150px 30px;
   overflow-x: hidden;
   margin-bottom: 30px;
 }

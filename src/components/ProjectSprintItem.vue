@@ -70,7 +70,6 @@
       :projectKey="projectKey"
       :projectId="projectId"
       :sprintId="sprint.id"
-      @update-project-after-action="updateProjectAfterAction"
       @create-task="createTask"
     />
 

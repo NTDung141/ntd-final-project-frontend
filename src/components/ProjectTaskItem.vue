@@ -1,5 +1,5 @@
 <template>
-  <div class="task-item">
+  <div class="task-item" @click="showTaskDetailDialog = true">
     <i class="fas fa-check-square task-item-icon"></i>
 
     <div class="task-item-name">{{ task.key }}</div>
@@ -32,15 +32,29 @@
         </v-list-item>
       </v-list>
     </v-menu>
+
+    <ProjectTaskDetail v-model="showTaskDetailDialog" :task="task" />
   </div>
 </template>
 
 <script>
+import ProjectTaskDetail from "@/components/ProjectTaskDetail.vue";
+
 export default {
   name: "project-task-item",
 
+  components: {
+    ProjectTaskDetail,
+  },
+
   props: {
     task: Object,
+  },
+
+  data() {
+    return {
+      showTaskDetailDialog: false,
+    };
   },
 
   methods: {
@@ -52,7 +66,7 @@ export default {
         return "In Progress";
       }
       if (status === 3) {
-        return "Released";
+        return "Resolve";
       }
       if (status === 4) {
         return "Closed";
@@ -91,6 +105,7 @@ export default {
   margin-top: 5px;
   min-height: 40px;
   padding: 0px 15px;
+  cursor: pointer;
 }
 
 .task-item-icon {
