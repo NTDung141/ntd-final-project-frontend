@@ -72,10 +72,10 @@ export default {
         { id: 5, name: "Retrospective", icon: "fas fa-thumbtack" },
       ],
 
-      menuItemIndex: 0,
+      menuItemIndex: 1,
 
       drawer: true,
-      mini: true,
+      mini: false,
     };
   },
 
@@ -86,10 +86,10 @@ export default {
 
     menuItemAction(menuItemId) {
       if (menuItemId === 1) {
-        this.goToProjectBacklog;
+        this.goToProjectBacklog();
       }
       if (menuItemId === 2) {
-        console.log(menuItemId);
+        this.goToProjectBoard();
       }
       if (menuItemId === 3) {
         console.log(menuItemId);
@@ -107,6 +107,10 @@ export default {
     },
 
     goToProjectBacklog() {
+      this.$router.push({ path: `/my-project/${this.projectId}/backlog` });
+    },
+
+    goToProjectBoard() {
       this.$router.push(`/my-project/${this.projectId}`);
     },
   },
