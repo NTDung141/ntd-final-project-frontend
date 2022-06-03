@@ -116,6 +116,7 @@ export default {
 
   props: {
     task: Object,
+    project: Object,
   },
 
   data() {
@@ -127,6 +128,11 @@ export default {
         { id: 4, name: "Closed" },
       ],
       taskStatus: this.task.status,
+      isEditAssignee: false,
+      isEditSprint: false,
+      isEditStatus: false,
+      isEditPriority: false,
+      isEditDueDate: false,
     };
   },
 

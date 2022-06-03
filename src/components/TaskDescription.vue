@@ -35,6 +35,7 @@
       <div
         v-if="!isEditting && !task.description"
         class="task-description task-feature-value"
+        @click="isEditting = true"
       >
         There is no description
       </div>

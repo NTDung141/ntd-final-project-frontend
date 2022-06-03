@@ -5,16 +5,6 @@
         <i class="fas fa-check-square task-icon"></i>
         <div class="task-key">{{ task.key }}</div>
         <v-spacer></v-spacer>
-        <i
-          v-if="isEditting === false"
-          class="fas fa-pen fa-xs mr-3"
-          @click="isEditting = true"
-        ></i>
-        <i
-          v-if="isEditting === true"
-          class="fas fa-save fa-sm mr-3"
-          @click="saveTaskChange"
-        ></i>
         <i class="fas fa-times" @click="closeDialog"></i>
       </v-card-title>
 
@@ -25,7 +15,7 @@
         </v-col>
 
         <v-col cols="4">
-          <TaskDetail :task="task" />
+          <TaskDetail :task="task" :project="project" />
         </v-col>
       </v-row>
     </v-card>
@@ -36,6 +26,8 @@
 import TaskDescription from "@/components/TaskDescription.vue";
 import TaskDetail from "@/components/TaskDetail.vue";
 import TaskActivity from "@/components/TaskActivity.vue";
+import { mapGetters } from "vuex";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 
 export default {
   name: "project-task-detail",
@@ -52,6 +44,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      project: PROJECT_GETTERS.project,
+    }),
+
     showTaskDetailDialog: {
       get() {
         return this.value;
