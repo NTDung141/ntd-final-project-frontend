@@ -12,9 +12,20 @@
       <div class="sprint-name">
         {{ activeSprint ? activeSprint.name : project.key + " board" }}
       </div>
+      <v-spacer></v-spacer>
+      <v-btn depressed small color="primary">Complete Sprint</v-btn>
     </div>
 
-    <div class="project-board-body">
+    <div class="project-board-header">
+      <v-text-field
+        class="search-bar"
+        dense
+        outlined
+        append-icon="fas fa-search"
+      ></v-text-field>
+    </div>
+
+    <div class="project-board-body over-flow">
       <v-row>
         <v-card class="mr-3" elevation="0" color="grey lighten-4" width="260px">
           <v-card-title>
@@ -51,25 +62,11 @@
           </v-card-text>
 
           <div class="task-list" v-if="activeSprint">
-            <v-card
-              class="mb-1"
-              elevation="1"
+            <BoardTaskItem
               v-for="task in activeSprint.tasks"
               :key="task.id"
-            >
-              <div class="task-item">
-                <div class="task-item-name flex-start">{{ task.name }}</div>
-
-                <div class="flex-start">
-                  <i class="fas fa-check-square task-item-icon"></i>
-                  <div class="column-title">{{ task.key }}</div>
-                  <v-spacer></v-spacer>
-                  <v-avatar size="23" class="mr-2">
-                    <img src="@/assets/defaultAvatar2.jpg" />
-                  </v-avatar>
-                </div>
-              </div>
-            </v-card>
+              :task="task"
+            />
           </div>
         </v-card>
       </v-row>
@@ -83,9 +80,14 @@ import { CookieService } from "@/services/CookieService.js";
 import { PROJECT_API } from "@/factories/project.js";
 import { mapGetters } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+import BoardTaskItem from "@/components/BoardTaskItem.vue";
 
 export default {
   name: "project-board",
+
+  components: {
+    BoardTaskItem,
+  },
 
   data() {
     return {
@@ -129,7 +131,7 @@ export default {
   width: 96%;
   height: 100%;
   padding: 20px 30px 150px 30px;
-  overflow-x: hidden;
+  overflow: hidden;
   margin-bottom: 30px;
 }
 
@@ -146,7 +148,9 @@ export default {
 }
 
 .project-board-body {
-  width: 96%;
+  width: 100%;
+  height: 82%;
+  padding: 10px;
 }
 
 .column-title {
@@ -189,18 +193,11 @@ export default {
   padding: 5px 7px 10px 7px;
 }
 
-.task-item {
-  display: block;
-  padding: 12px;
+.search-bar {
+  max-width: 300px !important;
 }
 
-.task-item-name {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.task-item-icon {
-  margin-right: 5px;
-  color: #42a5f5;
+.over-flow {
+  overflow: auto;
 }
 </style>
