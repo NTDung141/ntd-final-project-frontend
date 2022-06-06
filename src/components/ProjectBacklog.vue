@@ -33,6 +33,7 @@ import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 import { PROJECT_API } from "@/factories/project.js";
+import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
 
 export default {
   name: "project-backlog",
@@ -55,6 +56,8 @@ export default {
   },
 
   beforeMount() {
+    this.changeTabIndex(0);
+
     axios
       .get(PROJECT_API.getProjectByIdApi(this.projectId), {
         headers: CookieService.authHeader(),
@@ -70,7 +73,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+    ...mapActions({
+      updateProject: PROJECT_ACTIONS.updateProject,
+      changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex,
+    }),
 
     isDisableStartSprintBtn() {
       let isDisable = false;

@@ -20,7 +20,7 @@
     <v-divider></v-divider>
 
     <v-list dense>
-      <v-list-item-group v-model="menuItemIndex" mandatory color="primary">
+      <v-list-item-group :value="currentTabIndex" mandatory color="primary">
         <v-list-item
           class="sidebar-sprint-subitem"
           v-for="menuItem in menuItems"
@@ -53,6 +53,10 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import SIDEBAR_GETTERS from "@/store/modules/sidebar/sidebar-getters.js";
+import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
+
 export default {
   name: "the-side-bar",
 
@@ -72,14 +76,20 @@ export default {
         { id: 5, name: "Retrospective", icon: "fas fa-thumbtack" },
       ],
 
-      menuItemIndex: 1,
-
       drawer: true,
       mini: false,
     };
   },
 
+  computed: {
+    ...mapGetters({
+      currentTabIndex: SIDEBAR_GETTERS.currentTabIndex,
+    }),
+  },
+
   methods: {
+    ...mapActions({ changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex }),
+
     toggleSidebar() {
       this.isShowSidebar = !this.isShowSidebar;
     },
