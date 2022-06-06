@@ -26,13 +26,13 @@
 import ProjectBacklogList from "@/components/ProjectBacklogList.vue";
 import ProjectSprintItem from "@/components/ProjectSprintItem.vue";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { SPRINT_API } from "@/factories/sprint.js";
 import { CookieService } from "@/services/CookieService.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+import { PROJECT_API } from "@/factories/project.js";
 
 export default {
   name: "project-backlog",
@@ -51,23 +51,16 @@ export default {
   data() {
     return {
       projectId: this.$route.params.id,
-      // project: {},
     };
   },
 
   beforeMount() {
-    const accessToken = Cookies.get("accessToken");
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
     axios
-      .get(`http://127.0.0.1:8000/api/project/${this.projectId}`, {
-        headers: headers,
+      .get(PROJECT_API.getProjectByIdApi(this.projectId), {
+        headers: CookieService.authHeader(),
       })
       .then((res) => {
         if (res.data && res.data.project) {
-          this.project = res.data.project;
           this.updateProject(res.data.project);
         }
       })
