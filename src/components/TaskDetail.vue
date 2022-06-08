@@ -14,12 +14,49 @@
 
         <v-col cols="7">
           <v-card-text>
-            <div class="task-feature-value flex-start">
+            <div
+              v-if="!isEditAssignee"
+              class="task-feature-value flex-start"
+              @click="isEditAssignee = true"
+            >
               <v-avatar size="20" class="mr-3">
                 <img src="@/assets/defaultAvatar2.jpg" />
               </v-avatar>
-              Assignee
+              {{ assignee[0].name }}
             </div>
+
+            <v-autocomplete
+              v-if="isEditAssignee"
+              v-model="assignee"
+              :items="project.users"
+              item-value="id"
+              item-text="name"
+              chips
+              dense
+              outlined
+            >
+              <template v-slot:selection="data">
+                <div class="flex-start">
+                  <v-avatar size="20" class="mr-3">
+                    <img src="@/assets/defaultAvatar2.jpg" />
+                  </v-avatar>
+                  {{ data.item.name }}
+                </div>
+              </template>
+
+              <template v-slot:item="data">
+                <template>
+                  <v-list-item-avatar size="30">
+                    <img src="@/assets/defaultAvatar2.jpg" />
+                  </v-list-item-avatar>
+                  <v-list-item-content @click="isEditAssignee = false">
+                    <v-list-item-title>
+                      {{ data.item.name }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
           </v-card-text>
         </v-col>
       </v-row>
@@ -33,9 +70,40 @@
 
         <v-col cols="7">
           <v-card-text>
-            <div class="task-feature-value">
-              <div class="flex-start">Sprint 1</div>
+            <div
+              v-if="!isEditSprint"
+              class="task-feature-value"
+              @click="isEditSprint = true"
+            >
+              <div class="flex-start">{{ sprint[0].name }}</div>
             </div>
+
+            <v-autocomplete
+              v-if="isEditSprint"
+              v-model="sprint"
+              :items="project.sprints"
+              item-value="id"
+              item-text="name"
+              chips
+              dense
+              outlined
+            >
+              <template v-slot:selection="data">
+                <div class="flex-start">
+                  {{ data.item.name }}
+                </div>
+              </template>
+
+              <template v-slot:item="data">
+                <template>
+                  <v-list-item-content @click="isEditSprint = false">
+                    <v-list-item-title class="flex-start">
+                      {{ data.item.name }}
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
           </v-card-text>
         </v-col>
       </v-row>
@@ -49,28 +117,23 @@
 
         <v-col cols="7">
           <v-card-text>
-            <div class="task-feature-value">
-              <div :class="'task-status ' + getStatusClass(task.status)">
-                {{ getStatus(task.status) }}
-              </div>
-            </div>
-
-            <!-- <v-select
-              v-model="taskStatus"
-              :items="status"
-              :item-value="id"
-              :item-text="name"
-              outlined
-              dense
-            >
-              <template slot="selection" slot-scope="data">
-                {{ data.item.name }}
+            <v-menu offset-y>
+              <template v-slot:activator="{ attrs, on }">
+                <div class="flex-start" v-bind="attrs" v-on="on">
+                  <div :class="'task-status ' + getStatus(task.status).style">
+                    {{ getStatus(task.status).name }}
+                  </div>
+                </div>
               </template>
 
-              <template slot="item" slot-scope="data">
-                {{ data.item.name }}
-              </template>
-            </v-select> -->
+              <v-list>
+                <v-list-item v-for="status in statuses" :key="status.id" link>
+                  <div :class="'task-status ' + status.style">
+                    {{ status.name }}
+                  </div>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-card-text>
         </v-col>
       </v-row>
@@ -84,9 +147,31 @@
 
         <v-col cols="7">
           <v-card-text>
-            <div class="task-feature-value">
-              <div class="flex-start">Priority</div>
-            </div>
+            <v-menu offset-y>
+              <template v-slot:activator="{ attrs, on }">
+                <div class="flex-start" v-bind="attrs" v-on="on">
+                  <div
+                    v-if="task.priority"
+                    :class="'task-status ' + getPriority(task.priority).style"
+                  >
+                    {{ getPriority(task.priority).name }}
+                  </div>
+                  <div v-if="!task.priority">None</div>
+                </div>
+              </template>
+
+              <v-list>
+                <v-list-item
+                  v-for="priority in priorities"
+                  :key="priority.id"
+                  link
+                >
+                  <div :class="'task-status ' + priority.style">
+                    {{ priority.name }}
+                  </div>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-card-text>
         </v-col>
       </v-row>
@@ -100,9 +185,25 @@
 
         <v-col cols="7">
           <v-card-text>
-            <div class="task-feature-value">
-              <div class="flex-start">Due date</div>
-            </div>
+            <v-menu
+              v-model="isEditDueDate"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <div class="task-feature-value" v-bind="attrs" v-on="on">
+                  <div class="flex-start">{{ dueDate ? dueDate : "None" }}</div>
+                </div>
+              </template>
+              <v-date-picker
+                v-model="dueDate"
+                :min="currentDate"
+                @input="isEditDueDate = false"
+              ></v-date-picker>
+            </v-menu>
           </v-card-text>
         </v-col>
       </v-row>
@@ -121,50 +222,49 @@ export default {
 
   data() {
     return {
-      status: [
-        { id: 1, name: "Opened" },
-        { id: 2, name: "In Progress" },
-        { id: 3, name: "Resolve" },
-        { id: 4, name: "Closed" },
+      statuses: [
+        { id: 1, name: "Opened", style: "status-1" },
+        { id: 2, name: "In Progress", style: "status-2" },
+        { id: 3, name: "Resolve", style: "status-3" },
+        { id: 4, name: "Closed", style: "status-4" },
       ],
-      taskStatus: this.task.status,
+      priorities: [
+        { id: 1, name: "High", style: "status-1" },
+        { id: 2, name: "Normal", style: "status-3" },
+        { id: 3, name: "Low", style: "status-4" },
+      ],
+      taskStatus: {},
+      assignee: this.project.users,
+      sprint: this.project.sprints,
+      dueDate: this.task.start_date ? this.task.start_date.slice(0, 10) : null,
+      currentDate: new Date().toISOString().slice(0, 10),
       isEditAssignee: false,
       isEditSprint: false,
-      isEditStatus: false,
-      isEditPriority: false,
       isEditDueDate: false,
     };
   },
 
   methods: {
     getStatus(status) {
-      if (status === 1) {
-        return "Opened";
-      }
-      if (status === 2) {
-        return "In Progress";
-      }
-      if (status === 3) {
-        return "Released";
-      }
-      if (status === 4) {
-        return "Closed";
-      }
+      let returnValue = {};
+      this.statuses.forEach((item) => {
+        if (item.id === status) {
+          returnValue = item;
+        }
+      });
+
+      return returnValue;
     },
 
-    getStatusClass(status) {
-      if (status === 1) {
-        return "status-1";
-      }
-      if (status === 2) {
-        return "status-2";
-      }
-      if (status === 3) {
-        return "status-3";
-      }
-      if (status === 4) {
-        return "status-4";
-      }
+    getPriority(priority) {
+      let returnValue = {};
+      this.priorities.forEach((item) => {
+        if (item.id === priority) {
+          returnValue = item;
+        }
+      });
+
+      return returnValue;
     },
   },
 };

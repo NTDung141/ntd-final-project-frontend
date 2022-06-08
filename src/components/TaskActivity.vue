@@ -1,6 +1,6 @@
 <template>
   <v-card-text>
-    <div class="feature-label flex-start mb-3">Activity</div>
+    <div class="feature-label flex-start mb-3">Activities & Comments</div>
 
     <div class="task-comment">
       <v-avatar size="30" class="mr-3">
