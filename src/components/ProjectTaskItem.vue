@@ -2,7 +2,7 @@
   <div class="task-item" @click="showTaskDetailDialog = true">
     <i class="fas fa-check-square task-item-icon"></i>
 
-    <div class="task-item-name">{{ task.key }}</div>
+    <div class="task-item-name">{{ projectKey + "-" + task.key }}</div>
 
     <div class="task-item-name">{{ task.name }}</div>
 
@@ -49,6 +49,7 @@ export default {
 
   props: {
     task: Object,
+    projectKey: String,
   },
 
   data() {

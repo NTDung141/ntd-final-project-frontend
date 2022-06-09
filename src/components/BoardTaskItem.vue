@@ -6,7 +6,7 @@
 
         <div class="flex-start">
           <i class="fas fa-check-square task-item-icon"></i>
-          <div class="task-item-key">{{ task.key }}</div>
+          <div class="task-item-key">{{ projectKey + "-" + task.key }}</div>
           <v-spacer></v-spacer>
           <v-avatar size="23" class="mr-2">
             <img src="@/assets/defaultAvatar2.jpg" />
@@ -31,6 +31,7 @@ export default {
 
   props: {
     task: Object,
+    projectKey: String,
   },
 
   data() {

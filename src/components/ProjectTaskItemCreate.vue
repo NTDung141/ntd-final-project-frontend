@@ -18,16 +18,16 @@
             outlined
           ></v-text-field>
         </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" type="submit" :disabled="!this.formValid">
+            Save
+          </v-btn>
+
+          <v-btn @click="show = false"> Cancel </v-btn>
+        </v-card-actions>
       </v-form>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" type="submit" :disabled="!this.formValid">
-          Save
-        </v-btn>
-
-        <v-btn @click="show = false"> Cancel </v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

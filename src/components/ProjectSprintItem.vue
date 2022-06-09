@@ -50,7 +50,12 @@
         There are no issues in this sprint
       </div>
 
-      <ProjectTaskItem v-for="task in tasks" :key="task.id" :task="task" />
+      <ProjectTaskItem
+        v-for="task in tasks"
+        :key="task.id"
+        :task="task"
+        :projectKey="projectKey"
+      />
 
       <v-card-actions v-if="sprint.status !== 3">
         <v-btn

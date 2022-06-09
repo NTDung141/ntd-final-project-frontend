@@ -26,49 +26,20 @@
     </div>
 
     <div class="project-board-body over-flow">
-      <v-row>
-        <v-card class="mr-3" elevation="0" color="grey lighten-4" width="260px">
-          <v-card-title>
-            <div class="column-title">TO DO</div>
-          </v-card-title>
+      <v-row class="project-board-row">
+        <ProjectBoardColumn
+          v-for="column in columns"
+          :key="column.id"
+          :activeSprint="activeSprint"
+          :columnStatus="column.status"
+          :columnName="column.name"
+          :projectKey="project.key"
+          @go-to-project-backlog="goToProjectBacklog"
+        />
 
-          <v-card-text v-if="!activeSprint">
-            <div class="no-active-sprint">
-              <div class="flex-center">
-                <v-img
-                  height="128px"
-                  width="128px"
-                  :src="require('../assets/scrum2x.png')"
-                ></v-img>
-              </div>
-
-              <div class="no-active-sprint-content-bold">
-                You haven't started a sprint
-              </div>
-
-              <div class="no-active-sprint-content">
-                You can't do anything on your board because you haven't started
-                a sprint yet. Go to the backlog to plan and start a sprint.
-              </div>
-            </div>
-
-            <v-btn
-              depressed
-              color="grey lighten-2"
-              small
-              @click="goToProjectBacklog"
-              >Go to Backlog</v-btn
-            >
-          </v-card-text>
-
-          <div class="task-list" v-if="activeSprint">
-            <BoardTaskItem
-              v-for="task in activeSprint.tasks"
-              :key="task.id"
-              :task="task"
-            />
-          </div>
-        </v-card>
+        <v-btn>
+          <i class="fas fa-plus"></i>
+        </v-btn>
       </v-row>
     </div>
   </div>
@@ -80,19 +51,25 @@ import { CookieService } from "@/services/CookieService.js";
 import { PROJECT_API } from "@/factories/project.js";
 import { mapGetters } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
-import BoardTaskItem from "@/components/BoardTaskItem.vue";
+import ProjectBoardColumn from "@/components/ProjectBoardColumn.vue";
 
 export default {
   name: "project-board",
 
   components: {
-    BoardTaskItem,
+    ProjectBoardColumn,
   },
 
   data() {
     return {
       projectId: this.$route.params.id,
       activeSprint: null,
+      columns: [
+        { id: 1, name: "TO DO", status: 1 },
+        { id: 2, name: "IN PROGRESS", status: 2 },
+        { id: 3, name: "RESOLVE", status: 3 },
+        { id: 4, name: "CLOSED", status: 4 },
+      ],
     };
   },
 
@@ -135,6 +112,11 @@ export default {
   margin-bottom: 30px;
 }
 
+.project-board-row {
+  min-height: 100% !important;
+  margin: 0px 15px 15px 0px;
+}
+
 .project-board-header {
   display: flex;
   justify-content: flex-start;
@@ -153,17 +135,6 @@ export default {
   padding: 10px;
 }
 
-.column-title {
-  font-size: 12px;
-  font-weight: 500;
-  color: #5e6c84;
-  text-transform: uppercase;
-}
-
-.no-active-sprint {
-  display: block;
-}
-
 .flex-center {
   display: flex;
   align-items: center;
@@ -174,23 +145,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-}
-
-.no-active-sprint-content-bold {
-  text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.no-active-sprint-content {
-  text-align: center;
-  font-size: 14px;
-  margin-bottom: 15px;
-}
-
-.task-list {
-  padding: 5px 7px 10px 7px;
 }
 
 .search-bar {
