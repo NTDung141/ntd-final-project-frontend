@@ -25,24 +25,22 @@
           <v-menu
             v-model="menuStartDate"
             :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="startDate"
+                :value="startDate"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 outlined
+                dense
               ></v-text-field>
             </template>
             <v-date-picker
               v-model="startDate"
               :max="endDate"
-              @input="menuStartDate = false"
+              @change="menuStartDate = false"
             ></v-date-picker>
           </v-menu>
 
@@ -54,18 +52,16 @@
           <v-menu
             v-model="menuEndDate"
             :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="endDate"
+                :value="endDate"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 outlined
+                dense
               ></v-text-field>
             </template>
             <v-date-picker

@@ -27,19 +27,23 @@
 
     <div class="project-board-body over-flow">
       <v-row class="project-board-row">
-        <ProjectBoardColumn
+        <v-col
           v-for="column in columns"
           :key="column.id"
-          :activeSprint="activeSprint"
-          :columnStatus="column.status"
-          :columnName="column.name"
-          :projectKey="project.key"
-          @go-to-project-backlog="goToProjectBacklog"
-        />
+          class="project-board-column"
+        >
+          <ProjectBoardColumn
+            :activeSprint="activeSprint"
+            :columnStatus="column.status"
+            :columnName="column.name"
+            :projectKey="project.key"
+            @go-to-project-backlog="goToProjectBacklog"
+          />
+        </v-col>
 
-        <v-btn>
+        <!-- <v-btn class="mt-1">
           <i class="fas fa-plus"></i>
-        </v-btn>
+        </v-btn> -->
       </v-row>
     </div>
   </div>
@@ -115,6 +119,11 @@ export default {
 .project-board-row {
   min-height: 100% !important;
   margin: 0px 15px 15px 0px;
+}
+
+.project-board-column {
+  margin: 0px !important;
+  padding: 5px 0px !important;
 }
 
 .project-board-header {

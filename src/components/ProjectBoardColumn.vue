@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mr-6" elevation="0" color="grey lighten-4" width="270px">
+  <v-card class="mr-6" elevation="0" color="grey lighten-4">
     <v-card-title>
       <div class="column-title">{{ columnName }}</div>
     </v-card-title>

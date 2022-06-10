@@ -8,8 +8,8 @@
 
     <v-spacer></v-spacer>
 
-    <div :class="'task-item-status ' + getStatusClass(task.status)">
-      {{ getStatus(task.status) }}
+    <div :class="'task-item-status ' + getStatus(task.status).style">
+      {{ getStatus(task.status).name }}
     </div>
 
     <v-avatar size="20" class="mr-2">
@@ -22,15 +22,31 @@
           <i class="fas fa-ellipsis-h"></i>
         </div>
       </template>
-      <v-list>
-        <v-list-item @click="editTask">
-          <v-list-item-title> Edit </v-list-item-title>
-        </v-list-item>
+      <div class="task-menu-box">
+        <div class="task-menu-title">ACTIONS</div>
+        <div>
+          <v-btn class="task-menu-item" @click="deleteTask" depressed small>
+            Delete
+          </v-btn>
+        </div>
 
-        <v-list-item @click="deleteTask">
-          <v-list-item-title> Delete </v-list-item-title>
-        </v-list-item>
-      </v-list>
+        <div class="task-menu-title">MOVE TO</div>
+        <div>
+          <v-btn class="task-menu-item" @click="moveToBacklog" depressed small>
+            Backlog
+          </v-btn>
+        </div>
+        <div v-for="sprint in sprintListToMove" :key="sprint.id">
+          <v-btn
+            class="task-menu-item"
+            @click="moveToAnotherSprint(sprint)"
+            depressed
+            small
+          >
+            {{ sprint.name }}
+          </v-btn>
+        </div>
+      </div>
     </v-menu>
 
     <ProjectTaskDetail v-model="showTaskDetailDialog" :task="task" />
@@ -39,6 +55,8 @@
 
 <script>
 import ProjectTaskDetail from "@/components/ProjectTaskDetail.vue";
+import { mapGetters } from "vuex";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 
 export default {
   name: "project-task-item",
@@ -55,41 +73,47 @@ export default {
   data() {
     return {
       showTaskDetailDialog: false,
+      statuses: [
+        { id: 1, name: "Opened", style: "status-1" },
+        { id: 2, name: "In Progress", style: "status-2" },
+        { id: 3, name: "Resolve", style: "status-3" },
+        { id: 4, name: "Closed", style: "status-4" },
+      ],
     };
+  },
+
+  computed: {
+    ...mapGetters({
+      project: PROJECT_GETTERS.project,
+    }),
+
+    sprintListToMove() {
+      let sprintListToMove = [];
+      sprintListToMove = this.project.sprints.filter(
+        (sprint) => sprint.id !== this.task.sprint_id
+      );
+
+      return sprintListToMove;
+    },
   },
 
   methods: {
     getStatus(status) {
-      if (status === 1) {
-        return "Opened";
-      }
-      if (status === 2) {
-        return "In Progress";
-      }
-      if (status === 3) {
-        return "Resolve";
-      }
-      if (status === 4) {
-        return "Closed";
-      }
+      let returnValue = {};
+      this.statuses.forEach((item) => {
+        if (item.id === status) {
+          returnValue = item;
+        }
+      });
+
+      return returnValue;
     },
 
-    getStatusClass(status) {
-      if (status === 1) {
-        return "status-1";
-      }
-      if (status === 2) {
-        return "status-2";
-      }
-      if (status === 3) {
-        return "status-3";
-      }
-      if (status === 4) {
-        return "status-4";
-      }
+    moveToAnotherSprint(sprint) {
+      console.log(sprint);
     },
 
-    editTask() {},
+    moveToBacklog() {},
 
     deleteTask() {},
   },
@@ -162,7 +186,31 @@ export default {
   color: #37474f;
 }
 
-.task-item-actions-item {
-  max-height: 30px !important;
+.task-menu-box {
+  min-width: 100px;
+  display: block;
+  background-color: #fff;
+  padding: 8px 0px;
+  border-radius: 3px;
+}
+
+.task-menu-title {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-weight: 400;
+  font-size: 11px;
+  padding: 15px 0px 15px 12px;
+}
+
+.task-menu-item {
+  width: 100%;
+  border-radius: 0px;
+  text-transform: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 8px;
+  background-color: #fff !important;
 }
 </style>

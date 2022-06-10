@@ -3,7 +3,7 @@
     <v-card elevation="0" class="task-info">
       <v-card-title>
         <i class="fas fa-check-square task-icon"></i>
-        <div class="task-key">{{ task.key }}</div>
+        <div class="task-key">{{ project.key + "-" + task.key }}</div>
         <v-spacer></v-spacer>
         <i class="fas fa-times" @click="closeDialog"></i>
       </v-card-title>
