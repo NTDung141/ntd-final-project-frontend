@@ -72,7 +72,9 @@ export default {
       const newTask = new FormData();
       newTask.append("name", this.taskName);
       newTask.append("key", this.projectKey);
-      newTask.append("sprint_id", this.sprintId);
+      if (this.sprintId) {
+        newTask.append("sprint_id", this.sprintId);
+      }
       newTask.append("project_id", this.projectId);
       this.$emit("create-task", newTask);
       this.show = false;

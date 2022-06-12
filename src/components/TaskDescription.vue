@@ -9,13 +9,18 @@
         {{ task.name }}
       </div>
 
-      <v-text-field v-if="isEditTaskName" v-model="taskName" outlined>
+      <v-text-field
+        v-if="isEditTaskName"
+        v-model="taskName"
+        @keyup.enter="changeName"
+        outlined
+      >
         <template slot="append-outer">
-          <v-btn small class="mr-1">
+          <v-btn small class="mr-1" @click="changeName">
             <i class="fas fa-check"></i>
           </v-btn>
 
-          <v-btn small @click="isEditTaskName = false">
+          <v-btn small @click="cancelChangeName">
             <i class="fas fa-times"></i>
           </v-btn>
         </template>
@@ -27,7 +32,7 @@
 
       <div
         v-if="!isEditting && task.description"
-        v-html="task.description"
+        v-html="content"
         class="task-description task-feature-value"
         @click="isEditting = true"
       ></div>
@@ -44,8 +49,8 @@
     <v-card-text v-if="isEditting">
       <vue-editor v-model="content"></vue-editor>
       <v-card-actions>
-        <v-btn color="primary" small>Save</v-btn>
-        <v-btn small @click="isEditting = false">Cancel</v-btn>
+        <v-btn color="primary" small @click="changeDescription">Save</v-btn>
+        <v-btn small @click="cancelChangeDescription">Cancel</v-btn>
       </v-card-actions>
     </v-card-text>
   </div>
@@ -53,6 +58,12 @@
 
 <script>
 import { VueEditor } from "vue2-editor";
+import axios from "axios";
+import { CookieService } from "@/services/CookieService.js";
+import { TASK_API } from "@/factories/task.js";
+import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
+import { mapActions } from "vuex";
+
 export default {
   name: "task-description",
 
@@ -71,6 +82,55 @@ export default {
       content: this.task.description,
       taskName: this.task.name,
     };
+  },
+
+  methods: {
+    ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+
+    updateTaskAxios(updateTask) {
+      axios
+        .post(TASK_API.updateApi, updateTask, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.updateProject(res.data.project);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    changeName() {
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("name", this.taskName);
+
+      this.isEditTaskName = false;
+
+      this.updateTaskAxios(updateTask);
+    },
+
+    cancelChangeName() {
+      this.taskName = this.task.name;
+      this.isEditTaskName = false;
+    },
+
+    changeDescription() {
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("description", this.content);
+
+      this.isEditting = false;
+
+      this.updateTaskAxios(updateTask);
+    },
+
+    cancelChangeDescription() {
+      this.content = this.task.description;
+      this.isEditting = false;
+    },
   },
 };
 </script>

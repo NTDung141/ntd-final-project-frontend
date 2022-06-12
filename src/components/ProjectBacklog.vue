@@ -7,6 +7,20 @@
         {{ project.name }}
       </router-link>
     </div>
+
+    <div class="project-backlog-header">
+      <div class="backlog-name">Backlog</div>
+    </div>
+
+    <div class="project-backlog-header">
+      <v-text-field
+        class="search-bar"
+        dense
+        outlined
+        append-icon="fas fa-search"
+      ></v-text-field>
+    </div>
+
     <ProjectSprintItem
       v-for="sprint in project.sprints"
       :key="sprint.id"
@@ -18,7 +32,7 @@
       @complete-sprint="completeSprint"
     />
 
-    <ProjectBacklogList @create-sprint="createSprint" />
+    <ProjectBacklogList :project="project" @create-sprint="createSprint" />
   </div>
 </template>
 
@@ -165,5 +179,21 @@ export default {
   padding: 20px 30px 150px 30px;
   overflow-x: hidden;
   margin-bottom: 30px;
+}
+
+.project-backlog-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.search-bar {
+  max-width: 300px !important;
+}
+
+.backlog-name {
+  font-size: 23px;
+  font-weight: 500;
 }
 </style>

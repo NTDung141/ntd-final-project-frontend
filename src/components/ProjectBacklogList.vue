@@ -9,25 +9,95 @@
         <v-btn small depressed @click="createSprint"> Create Sprint </v-btn>
       </v-card-title>
 
-      <div class="empty-task-item">Your backlog is empty</div>
+      <div class="empty-task-item" v-if="tasks.length < 1">
+        Your backlog is empty
+      </div>
+
+      <ProjectTaskItem
+        v-for="task in tasks"
+        :key="task.id"
+        :task="task"
+        :projectKey="project.key"
+      />
 
       <v-card-actions>
-        <v-btn small text class="project-backlog-list-create-task">
+        <v-btn
+          small
+          text
+          class="project-backlog-list-create-task"
+          @click="showCreateTaskDialog = true"
+        >
           <i class="fas fa-plus mr-2"></i>
           Create issue
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <ProjectTaskItemCreate
+      v-model="showCreateTaskDialog"
+      :projectId="project.id"
+      @create-task="createTask"
+    />
   </div>
 </template>
 
 <script>
+import ProjectTaskItem from "@/components/ProjectTaskItem.vue";
+import ProjectTaskItemCreate from "@/components/ProjectTaskItemCreate.vue";
+import axios from "axios";
+import { CookieService } from "@/services/CookieService.js";
+import { TASK_API } from "@/factories/task.js";
+import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
+import { mapActions } from "vuex";
 export default {
   name: "project-backlog-list",
 
+  components: {
+    ProjectTaskItem,
+    ProjectTaskItemCreate,
+  },
+
+  props: {
+    project: Object,
+  },
+
+  data() {
+    return {
+      showCreateTaskDialog: false,
+    };
+  },
+
   methods: {
+    ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+
     createSprint() {
       this.$emit("create-sprint");
+    },
+
+    createTask(newTask) {
+      axios
+        .post(TASK_API.createApi, newTask, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.updateProject(res.data.project);
+            this.showCreateTaskDialog = false;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+
+  computed: {
+    tasks() {
+      let taskList = [];
+      if (this.project && this.project.tasks) {
+        taskList = this.project.tasks.filter((task) => !task.sprint_id);
+      }
+      return taskList;
     },
   },
 };

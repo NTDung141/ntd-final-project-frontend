@@ -19,16 +19,16 @@
               class="task-feature-value flex-start"
               @click="isEditAssignee = true"
             >
-              <v-avatar size="20" class="mr-3">
+              <v-avatar v-if="assignee" size="20" class="mr-3">
                 <img src="@/assets/defaultAvatar2.jpg" />
               </v-avatar>
-              {{ assignee[0].name }}
+              {{ assignee ? computedAssignee.name : "None" }}
             </div>
 
             <v-autocomplete
               v-if="isEditAssignee"
               v-model="assignee"
-              :items="project.users"
+              :items="assignees"
               item-value="id"
               item-text="name"
               chips
@@ -49,7 +49,7 @@
                   <v-list-item-avatar size="30">
                     <img src="@/assets/defaultAvatar2.jpg" />
                   </v-list-item-avatar>
-                  <v-list-item-content @click="isEditAssignee = false">
+                  <v-list-item-content @click="changeAssignee(data.item)">
                     <v-list-item-title>
                       {{ data.item.name }}
                     </v-list-item-title>
@@ -75,13 +75,15 @@
               class="task-feature-value"
               @click="isEditSprint = true"
             >
-              <div class="flex-start">{{ sprint[0].name }}</div>
+              <div class="flex-start">
+                {{ sprint ? computedSprint.name : "None" }}
+              </div>
             </div>
 
             <v-autocomplete
               v-if="isEditSprint"
               v-model="sprint"
-              :items="project.sprints"
+              :items="sprints"
               item-value="id"
               item-text="name"
               chips
@@ -96,7 +98,7 @@
 
               <template v-slot:item="data">
                 <template>
-                  <v-list-item-content @click="isEditSprint = false">
+                  <v-list-item-content @click="changeSprint(data.item)">
                     <v-list-item-title class="flex-start">
                       {{ data.item.name }}
                     </v-list-item-title>
@@ -119,15 +121,24 @@
           <v-card-text>
             <v-menu offset-y>
               <template v-slot:activator="{ attrs, on }">
-                <div class="flex-start" v-bind="attrs" v-on="on">
-                  <div :class="'task-status ' + getStatus(task.status).style">
-                    {{ getStatus(task.status).name }}
+                <div
+                  class="task-feature-value flex-start"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <div :class="'task-status ' + getStatus(status).style">
+                    {{ getStatus(status).name }}
                   </div>
                 </div>
               </template>
 
               <v-list>
-                <v-list-item v-for="status in statuses" :key="status.id" link>
+                <v-list-item
+                  v-for="status in statuses"
+                  :key="status.id"
+                  @click="changeStatus(status)"
+                  link
+                >
                   <div :class="'task-status ' + status.style">
                     {{ status.name }}
                   </div>
@@ -149,14 +160,18 @@
           <v-card-text>
             <v-menu offset-y>
               <template v-slot:activator="{ attrs, on }">
-                <div class="flex-start" v-bind="attrs" v-on="on">
+                <div
+                  class="task-feature-value flex-start"
+                  v-bind="attrs"
+                  v-on="on"
+                >
                   <div
-                    v-if="task.priority"
-                    :class="'task-status ' + getPriority(task.priority).style"
+                    v-if="priority"
+                    :class="'task-status ' + getPriority(priority).style"
                   >
-                    {{ getPriority(task.priority).name }}
+                    {{ getPriority(priority).name }}
                   </div>
-                  <div v-if="!task.priority">None</div>
+                  <div v-if="!priority">None</div>
                 </div>
               </template>
 
@@ -164,6 +179,7 @@
                 <v-list-item
                   v-for="priority in priorities"
                   :key="priority.id"
+                  @click="changePriority(priority)"
                   link
                 >
                   <div :class="'task-status ' + priority.style">
@@ -188,7 +204,6 @@
             <v-menu
               v-model="isEditDueDate"
               :close-on-content-click="false"
-              :nudge-right="40"
               transition="scale-transition"
               offset-y
               min-width="auto"
@@ -202,6 +217,8 @@
                 v-model="dueDate"
                 :min="currentDate"
                 @input="isEditDueDate = false"
+                no-title
+                scrollable
               ></v-date-picker>
             </v-menu>
           </v-card-text>
@@ -212,6 +229,12 @@
 </template>
 
 <script>
+import axios from "axios";
+import { CookieService } from "@/services/CookieService.js";
+import { TASK_API } from "@/factories/task.js";
+import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
+import { mapActions } from "vuex";
+
 export default {
   name: "task-detail",
 
@@ -233,9 +256,12 @@ export default {
         { id: 2, name: "Normal", style: "status-3" },
         { id: 3, name: "Low", style: "status-4" },
       ],
-      taskStatus: {},
-      assignee: this.project.users,
-      sprint: this.project.sprints,
+      status: null,
+      priority: null,
+      assignees: this.project.users,
+      assignee: null,
+      sprints: this.project.sprints,
+      sprint: null,
       dueDate: this.task.start_date ? this.task.start_date.slice(0, 10) : null,
       currentDate: new Date().toISOString().slice(0, 10),
       isEditAssignee: false,
@@ -244,7 +270,60 @@ export default {
     };
   },
 
+  beforeMount() {
+    this.project.sprints.forEach((sprint) => {
+      if (sprint.id === this.task.sprint_id) {
+        this.sprint = sprint;
+      }
+    });
+
+    this.assignees.forEach((assignee) => {
+      if (assignee.id === this.task.assignee_id) {
+        this.assignee = assignee;
+      }
+    });
+
+    this.status = this.task.status;
+    this.priority = this.task.priority;
+  },
+
+  computed: {
+    computedSprint() {
+      let returnSprint = {};
+      if (!this.sprint) {
+        this.project.sprints.forEach((sprint) => {
+          if (sprint.id === this.task.sprint_id) {
+            returnSprint = sprint;
+            this.sprint = sprint;
+          }
+        });
+      } else {
+        returnSprint = this.sprint;
+      }
+
+      return returnSprint;
+    },
+
+    computedAssignee() {
+      let returnAssignee = {};
+      if (!this.assignee) {
+        this.assignees.forEach((assignee) => {
+          if (assignee.id === this.task.assignee_id) {
+            returnAssignee = assignee;
+            this.assignee = assignee;
+          }
+        });
+      } else {
+        returnAssignee = this.assignee;
+      }
+
+      return returnAssignee;
+    },
+  },
+
   methods: {
+    ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+
     getStatus(status) {
       let returnValue = {};
       this.statuses.forEach((item) => {
@@ -265,6 +344,63 @@ export default {
       });
 
       return returnValue;
+    },
+
+    updateTaskAxios(updateTask) {
+      axios
+        .post(TASK_API.updateApi, updateTask, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.updateProject(res.data.project);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    changeSprint(newSprint) {
+      this.isEditSprint = false;
+      this.sprint = newSprint;
+
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("sprint_id", newSprint.id);
+
+      this.updateTaskAxios(updateTask);
+    },
+
+    changeAssignee(newAssignee) {
+      this.isEditAssignee = false;
+      this.assignee = newAssignee;
+
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("assignee_id", newAssignee.id);
+
+      this.updateTaskAxios(updateTask);
+    },
+
+    changeStatus(newStatus) {
+      this.status = newStatus.id;
+
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("status", newStatus.id);
+
+      this.updateTaskAxios(updateTask);
+    },
+
+    changePriority(newPriority) {
+      this.priority = newPriority.id;
+
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("priority", newPriority.id);
+
+      this.updateTaskAxios(updateTask);
     },
   },
 };

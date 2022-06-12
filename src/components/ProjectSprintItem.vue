@@ -29,6 +29,7 @@
         </v-btn>
         <div v-if="sprint.status === 3" class="project-sprint-completed">
           Completed
+          <i class="fas fa-check completed-icon ml-2"></i>
         </div>
 
         <div class="project-sprint-actions" v-if="sprint.status !== 3">
@@ -206,5 +207,9 @@ export default {
   border-radius: 3px;
   font-size: 14px;
   color: #6b778c;
+}
+
+.completed-icon {
+  color: #1976d2;
 }
 </style>

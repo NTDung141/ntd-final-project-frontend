@@ -117,11 +117,13 @@ export default {
     },
 
     goToProjectBacklog() {
-      this.$router.push({ path: `/my-project/${this.projectId}/backlog` });
+      this.$router
+        .push({ path: `/my-project/${this.projectId}/backlog` })
+        .catch(() => {});
     },
 
     goToProjectBoard() {
-      this.$router.push(`/my-project/${this.projectId}`);
+      this.$router.push(`/my-project/${this.projectId}`).catch(() => {});
     },
   },
 };

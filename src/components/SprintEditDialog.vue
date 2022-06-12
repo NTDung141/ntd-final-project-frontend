@@ -25,6 +25,8 @@
           <v-menu
             v-model="menuStartDate"
             :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
@@ -41,6 +43,8 @@
               v-model="startDate"
               :max="endDate"
               @change="menuStartDate = false"
+              no-title
+              scrollable
             ></v-date-picker>
           </v-menu>
 
@@ -52,6 +56,8 @@
           <v-menu
             v-model="menuEndDate"
             :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
             min-width="auto"
           >
             <template v-slot:activator="{ on, attrs }">
@@ -68,6 +74,8 @@
               v-model="endDate"
               :min="startDate"
               @input="menuEndDate = false"
+              no-title
+              scrollable
             ></v-date-picker>
           </v-menu>
         </v-card-text>

@@ -101,7 +101,9 @@ export default {
 
   methods: {
     goToProjectBacklog() {
-      this.$router.push({ path: `/my-project/${this.projectId}/backlog` });
+      this.$router
+        .push({ path: `/my-project/${this.projectId}/backlog` })
+        .catch(() => {});
     },
   },
 };
