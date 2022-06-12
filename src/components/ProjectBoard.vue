@@ -50,12 +50,10 @@
 </template>
 
 <script>
-import axios from "axios";
-import { CookieService } from "@/services/CookieService.js";
-import { PROJECT_API } from "@/factories/project.js";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 import ProjectBoardColumn from "@/components/ProjectBoardColumn.vue";
+import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
 
 export default {
   name: "project-board",
@@ -84,26 +82,36 @@ export default {
   },
 
   beforeMount() {
-    axios
-      .get(PROJECT_API.getActiveSprintApi(this.projectId), {
-        headers: CookieService.authHeader(),
-      })
-      .then((res) => {
-        if (res.data) {
-          this.activeSprint = res.data.active_sprint;
-          console.log(res.data);
+    this.changeTabIndex(1);
+
+    if (this.project.sprints) {
+      this.project.sprints.forEach((sprint) => {
+        if (sprint.status === 2) {
+          this.activeSprint = sprint;
         }
-      })
-      .catch((err) => {
-        console.log(err);
       });
+    }
   },
 
   methods: {
+    ...mapActions({
+      changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex,
+    }),
+
     goToProjectBacklog() {
       this.$router
         .push({ path: `/my-project/${this.projectId}/backlog` })
         .catch(() => {});
+    },
+  },
+
+  watch: {
+    project() {
+      this.project.sprints.forEach((sprint) => {
+        if (sprint.status === 2) {
+          this.activeSprint = sprint;
+        }
+      });
     },
   },
 };

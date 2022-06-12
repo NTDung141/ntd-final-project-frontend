@@ -195,7 +195,9 @@
       <v-row no no-gutters>
         <v-col cols="5">
           <v-card-text>
-            <div class="feature-label flex-start">Due date</div>
+            <div :class="'feature-label flex-start ' + expriedClass">
+              Due date
+            </div>
           </v-card-text>
         </v-col>
 
@@ -210,7 +212,9 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <div class="task-feature-value" v-bind="attrs" v-on="on">
-                  <div class="flex-start">{{ dueDate ? dueDate : "None" }}</div>
+                  <div :class="'flex-start ' + expriedClass">
+                    {{ dueDate ? dueDate : "None" }}
+                  </div>
                 </div>
               </template>
               <v-date-picker
@@ -262,7 +266,7 @@ export default {
       assignee: null,
       sprints: this.project.sprints,
       sprint: null,
-      dueDate: this.task.start_date ? this.task.start_date.slice(0, 10) : null,
+      dueDate: null,
       currentDate: new Date().toISOString().slice(0, 10),
       isEditAssignee: false,
       isEditSprint: false,
@@ -285,6 +289,10 @@ export default {
 
     this.status = this.task.status;
     this.priority = this.task.priority;
+
+    if (this.task.due_date) {
+      this.dueDate = this.task.due_date.slice(0, 10);
+    }
   },
 
   computed: {
@@ -318,6 +326,12 @@ export default {
       }
 
       return returnAssignee;
+    },
+
+    expriedClass() {
+      if (this.task.due_date && new Date() > Date.parse(this.task.due_date)) {
+        return "expired-task";
+      } else return "";
     },
   },
 
@@ -403,6 +417,16 @@ export default {
       this.updateTaskAxios(updateTask);
     },
   },
+
+  watch: {
+    dueDate() {
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("due_date", this.dueDate);
+
+      this.updateTaskAxios(updateTask);
+    },
+  },
 };
 </script>
 
@@ -473,5 +497,9 @@ export default {
 .status-4 {
   background-color: #b0bec5;
   color: #37474f;
+}
+
+.expired-task {
+  color: #c62828 !important;
 }
 </style>
