@@ -19,7 +19,7 @@
 
           <div class="project-sprint-dialog-label">
             Start date
-            <div class="required-label">*</div>
+            <div v-if="sprint.status === 2" class="required-label">*</div>
           </div>
 
           <v-menu
@@ -31,17 +31,18 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                :value="startDate"
+                :value="computedStartDate"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 outlined
                 dense
+                :filled="startDate ? false : true"
               ></v-text-field>
             </template>
             <v-date-picker
-              v-model="startDate"
-              :max="endDate"
+              v-model="startDatePicked"
+              :max="endDate ? endDate : false"
               @change="menuStartDate = false"
               no-title
               scrollable
@@ -50,7 +51,7 @@
 
           <div class="project-sprint-dialog-label">
             End date
-            <div class="required-label">*</div>
+            <div v-if="sprint.status === 2" class="required-label">*</div>
           </div>
 
           <v-menu
@@ -62,17 +63,18 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                :value="endDate"
+                :value="computedEndDate"
                 readonly
                 v-bind="attrs"
                 v-on="on"
                 outlined
                 dense
+                :filled="endDate ? false : true"
               ></v-text-field>
             </template>
             <v-date-picker
-              v-model="endDate"
-              :min="startDate"
+              v-model="endDatePicked"
+              :min="startDate ? startDate : false"
               @input="menuEndDate = false"
               no-title
               scrollable
@@ -106,17 +108,27 @@ export default {
     sprint: Object,
   },
 
+  beforeMount() {
+    this.sprintName = this.sprint.name;
+
+    if (this.sprint.start_date) {
+      this.startDate = this.sprint.start_date.slice(0, 10);
+    }
+
+    if (this.sprint.end_date) {
+      this.endDate = this.sprint.end_date.slice(0, 10);
+    }
+  },
+
   data() {
     return {
+      sprintName: "",
       menuStartDate: false,
       menuEndDate: false,
-      startDate: this.sprint.start_date
-        ? this.sprint.start_date.slice(0, 10)
-        : new Date().toISOString().slice(0, 10),
-      endDate: this.sprint.end_date
-        ? this.sprint.end_date.slice(0, 10)
-        : new Date().toISOString().slice(0, 10),
-      sprintName: this.sprint.name,
+      startDate: "",
+      endDate: "",
+      startDatePicked: new Date().toISOString(),
+      endDatePicked: new Date().toISOString(),
       nameRules: [
         (value) => !!value || "Name is required.",
         (value) => (value && value.length <= 50) || "Max 50 characters",
@@ -132,6 +144,22 @@ export default {
       set(value) {
         this.$emit("input", value);
       },
+    },
+
+    computedStartDate() {
+      if (this.startDate) {
+        return this.startDate;
+      } else {
+        return "e.g  " + new Date().toISOString().slice(0, 10);
+      }
+    },
+
+    computedEndDate() {
+      if (this.endDate) {
+        return this.endDate;
+      } else {
+        return "e.g  " + new Date().toISOString().slice(0, 10);
+      }
     },
   },
 
@@ -157,6 +185,16 @@ export default {
         });
 
       this.showEditSprintDialog = false;
+    },
+  },
+
+  watch: {
+    startDatePicked() {
+      this.startDate = this.startDatePicked;
+    },
+
+    endDatePicked() {
+      this.endDate = this.endDatePicked;
     },
   },
 };

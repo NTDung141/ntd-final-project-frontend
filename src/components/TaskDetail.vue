@@ -196,6 +196,7 @@
         <v-col cols="5">
           <v-card-text>
             <div :class="'feature-label flex-start ' + expriedClass">
+              <i v-if="expriedClass" class="fas fa-fire mr-2"></i>
               Due date
             </div>
           </v-card-text>
@@ -441,6 +442,7 @@ export default {
   font-size: 14px;
   font-weight: 500;
   color: #172b4d;
+  padding-top: 5px;
 }
 
 .task-detail {
