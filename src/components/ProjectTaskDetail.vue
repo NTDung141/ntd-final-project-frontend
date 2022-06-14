@@ -10,12 +10,22 @@
 
       <v-row no-gutters>
         <v-col cols="8">
-          <TaskDescription :task="task" />
-          <TaskActivity :task="task" />
+          <TaskDescription
+            :task="task"
+            :showTaskDetailDialog="showTaskDetailDialog"
+          />
+          <TaskActivity
+            :task="task"
+            :showTaskDetailDialog="showTaskDetailDialog"
+          />
         </v-col>
 
         <v-col cols="4">
-          <TaskDetail :task="task" :project="project" />
+          <TaskDetail
+            :task="task"
+            :project="project"
+            :showTaskDetailDialog="showTaskDetailDialog"
+          />
         </v-col>
       </v-row>
     </v-card>

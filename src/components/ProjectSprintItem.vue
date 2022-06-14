@@ -47,7 +47,7 @@
         </div>
       </v-card-title>
 
-      <div class="empty-task-item" v-if="tasks.length < 1">
+      <div class="empty-task-item" v-if="tasks && tasks.length < 1">
         There are no issues in this sprint
       </div>
 
@@ -124,7 +124,13 @@ export default {
 
   computed: {
     tasks() {
-      return this.sprint.tasks;
+      let taskToShow = [];
+      if (this.sprint.tasks) {
+        taskToShow = this.sprint.tasks.filter((task) => task.is_deleted !== 1);
+        return taskToShow;
+      } else {
+        return taskToShow;
+      }
     },
   },
 

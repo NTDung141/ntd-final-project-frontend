@@ -95,7 +95,9 @@ export default {
     tasks() {
       let taskList = [];
       if (this.project && this.project.tasks) {
-        taskList = this.project.tasks.filter((task) => !task.sprint_id);
+        taskList = this.project.tasks.filter(
+          (task) => !task.sprint_id && task.is_deleted !== 1
+        );
       }
       return taskList;
     },

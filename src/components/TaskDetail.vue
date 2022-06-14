@@ -19,10 +19,16 @@
               class="task-feature-value flex-start"
               @click="isEditAssignee = true"
             >
-              <v-avatar v-if="assignee" size="20" class="mr-3">
+              <v-avatar
+                v-if="assignee && assignee.id !== 0"
+                size="20"
+                class="mr-3"
+              >
                 <img src="@/assets/defaultAvatar2.jpg" />
               </v-avatar>
-              {{ assignee ? computedAssignee.name : "None" }}
+              {{
+                assignee && assignee.id !== 0 ? computedAssignee.name : "None"
+              }}
             </div>
 
             <v-autocomplete
@@ -246,6 +252,7 @@ export default {
   props: {
     task: Object,
     project: Object,
+    showTaskDetailDialog: Boolean,
   },
 
   data() {
@@ -257,15 +264,16 @@ export default {
         { id: 4, name: "Closed", style: "status-4" },
       ],
       priorities: [
+        { id: 0, name: "None", style: "" },
         { id: 1, name: "High", style: "status-1" },
         { id: 2, name: "Normal", style: "status-3" },
         { id: 3, name: "Low", style: "status-4" },
       ],
       status: null,
       priority: null,
-      assignees: this.project.users,
+      assignees: [],
       assignee: null,
-      sprints: this.project.sprints,
+      sprints: [],
       sprint: null,
       dueDate: null,
       currentDate: new Date().toISOString().slice(0, 10),
@@ -282,11 +290,16 @@ export default {
       }
     });
 
+    this.assignees = this.project.users;
     this.assignees.forEach((assignee) => {
       if (assignee.id === this.task.assignee_id) {
         this.assignee = assignee;
       }
     });
+    this.assignees.unshift({ id: 0, name: "None" });
+
+    this.sprints = this.project.sprints;
+    this.sprints.unshift({ id: 0, name: "Backlog" });
 
     this.status = this.task.status;
     this.priority = this.task.priority;
@@ -380,9 +393,14 @@ export default {
       this.isEditSprint = false;
       this.sprint = newSprint;
 
+      let newSprintId = newSprint.id;
+      if (newSprintId === 0) {
+        newSprintId = null;
+      }
+
       const updateTask = new FormData();
       updateTask.append("id", this.task.id);
-      updateTask.append("sprint_id", newSprint.id);
+      updateTask.append("sprint_id", newSprintId);
 
       this.updateTaskAxios(updateTask);
     },
@@ -391,9 +409,14 @@ export default {
       this.isEditAssignee = false;
       this.assignee = newAssignee;
 
+      let newAssigneeId = newAssignee.id;
+      if (newAssigneeId === 0) {
+        newAssigneeId = null;
+      }
+
       const updateTask = new FormData();
       updateTask.append("id", this.task.id);
-      updateTask.append("assignee_id", newAssignee.id);
+      updateTask.append("assignee_id", newAssigneeId);
 
       this.updateTaskAxios(updateTask);
     },
@@ -411,9 +434,14 @@ export default {
     changePriority(newPriority) {
       this.priority = newPriority.id;
 
+      let newPriorityId = newPriority.id;
+      if (newPriorityId === 0) {
+        newPriorityId = null;
+      }
+
       const updateTask = new FormData();
       updateTask.append("id", this.task.id);
-      updateTask.append("priority", newPriority.id);
+      updateTask.append("priority", newPriorityId);
 
       this.updateTaskAxios(updateTask);
     },
@@ -426,6 +454,14 @@ export default {
       updateTask.append("due_date", this.dueDate);
 
       this.updateTaskAxios(updateTask);
+    },
+
+    showTaskDetailDialog() {
+      if (!this.showTaskDetailDialog) {
+        this.isEditAssignee = false;
+        this.isEditSprint = false;
+        this.isEditDueDate = false;
+      }
     },
   },
 };

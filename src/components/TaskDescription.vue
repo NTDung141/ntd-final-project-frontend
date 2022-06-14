@@ -69,6 +69,7 @@ export default {
 
   props: {
     task: Object,
+    showTaskDetailDialog: Boolean,
   },
 
   components: {
@@ -130,6 +131,15 @@ export default {
     cancelChangeDescription() {
       this.content = this.task.description;
       this.isEditting = false;
+    },
+  },
+
+  watch: {
+    showTaskDetailDialog() {
+      if (!this.showTaskDetailDialog) {
+        this.isEditting = false;
+        this.isEditTaskName = false;
+      }
     },
   },
 };

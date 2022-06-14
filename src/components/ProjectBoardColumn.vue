@@ -60,7 +60,7 @@ export default {
   computed: {
     taskList() {
       let taskList = this.activeSprint.tasks.filter(
-        (task) => task.status === this.columnStatus
+        (task) => task.status === this.columnStatus && task.is_deleted !== 1
       );
       return taskList;
     },

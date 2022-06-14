@@ -32,7 +32,13 @@
 
         <div class="task-menu-title">MOVE TO</div>
         <div>
-          <v-btn class="task-menu-item" @click="moveToBacklog" depressed small>
+          <v-btn
+            v-if="task.sprint_id"
+            class="task-menu-item"
+            @click="moveToBacklog"
+            depressed
+            small
+          >
             Backlog
           </v-btn>
         </div>
@@ -50,19 +56,27 @@
     </v-menu>
 
     <ProjectTaskDetail v-model="showTaskDetailDialog" :task="task" />
+
+    <TaskDeleteDialog v-model="showDeleteTaskDialog" :task="task" />
   </div>
 </template>
 
 <script>
 import ProjectTaskDetail from "@/components/ProjectTaskDetail.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
+import axios from "axios";
+import { CookieService } from "@/services/CookieService.js";
+import { TASK_API } from "@/factories/task.js";
+import TaskDeleteDialog from "@/components/TaskDeleteDialog.vue";
 
 export default {
   name: "project-task-item",
 
   components: {
     ProjectTaskDetail,
+    TaskDeleteDialog,
   },
 
   props: {
@@ -73,6 +87,7 @@ export default {
   data() {
     return {
       showTaskDetailDialog: false,
+      showDeleteTaskDialog: false,
       statuses: [
         { id: 1, name: "Opened", style: "status-1" },
         { id: 2, name: "In Progress", style: "status-2" },
@@ -98,6 +113,8 @@ export default {
   },
 
   methods: {
+    ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+
     getStatus(status) {
       let returnValue = {};
       this.statuses.forEach((item) => {
@@ -109,13 +126,40 @@ export default {
       return returnValue;
     },
 
-    moveToAnotherSprint(sprint) {
-      console.log(sprint);
+    updateTaskAxios(updateTask) {
+      axios
+        .post(TASK_API.updateApi, updateTask, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.project) {
+            this.updateProject(res.data.project);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
 
-    moveToBacklog() {},
+    moveToAnotherSprint(newSprint) {
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("sprint_id", newSprint.id);
 
-    deleteTask() {},
+      this.updateTaskAxios(updateTask);
+    },
+
+    moveToBacklog() {
+      const updateTask = new FormData();
+      updateTask.append("id", this.task.id);
+      updateTask.append("sprint_id", null);
+
+      this.updateTaskAxios(updateTask);
+    },
+
+    deleteTask() {
+      this.showDeleteTaskDialog = true;
+    },
   },
 };
 </script>
