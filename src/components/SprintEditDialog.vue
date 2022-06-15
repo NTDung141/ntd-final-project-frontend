@@ -38,6 +38,8 @@
                 outlined
                 dense
                 :filled="startDate ? false : true"
+                :append-icon="startDate ? 'fas fa-times-circle' : ''"
+                @click:append="clearStartDate"
               ></v-text-field>
             </template>
             <v-date-picker
@@ -70,6 +72,8 @@
                 outlined
                 dense
                 :filled="endDate ? false : true"
+                :append-icon="endDate ? 'fas fa-times-circle' : ''"
+                @click:append="clearEndDate"
               ></v-text-field>
             </template>
             <v-date-picker
@@ -185,6 +189,14 @@ export default {
         });
 
       this.showEditSprintDialog = false;
+    },
+
+    clearStartDate() {
+      this.startDate = "";
+    },
+
+    clearEndDate() {
+      this.endDate = "";
     },
   },
 
