@@ -82,6 +82,8 @@
     <SprintEditDialog v-model="showEditSprintDialog" :sprint="sprint" />
 
     <SprintDeleteDialog v-model="showDeleteSprintDialog" :sprint="sprint" />
+
+    <SprintCompleteDialog v-model="showCompleteSprintDialog" :sprint="sprint" />
   </div>
 </template>
 
@@ -96,6 +98,7 @@ import axios from "axios";
 import { CookieService } from "@/services/CookieService.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 import { mapActions } from "vuex";
+import SprintCompleteDialog from "@/components/SprintCompleteDialog.vue";
 
 export default {
   name: "project-sprint-item",
@@ -105,6 +108,7 @@ export default {
     ProjectTaskItemCreate,
     SprintEditDialog,
     SprintDeleteDialog,
+    SprintCompleteDialog,
   },
 
   props: {
@@ -119,6 +123,7 @@ export default {
       showEditSprintDialog: false,
       showDeleteSprintDialog: false,
       showCreateTaskDialog: false,
+      showCompleteSprintDialog: false,
     };
   },
 
@@ -142,7 +147,8 @@ export default {
     },
 
     completeSprint() {
-      this.$emit("complete-sprint", this.sprint.id);
+      // this.$emit("complete-sprint", this.sprint.id);
+      this.showCompleteSprintDialog = true;
     },
 
     createTask(newTask) {
