@@ -84,6 +84,8 @@
     <SprintDeleteDialog v-model="showDeleteSprintDialog" :sprint="sprint" />
 
     <SprintCompleteDialog v-model="showCompleteSprintDialog" :sprint="sprint" />
+
+    <SprintStartDialog v-model="showSprintStartDialog" :sprint="sprint" />
   </div>
 </template>
 
@@ -99,6 +101,7 @@ import { CookieService } from "@/services/CookieService.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 import { mapActions } from "vuex";
 import SprintCompleteDialog from "@/components/SprintCompleteDialog.vue";
+import SprintStartDialog from "@/components/SprintStartDialog.vue";
 
 export default {
   name: "project-sprint-item",
@@ -109,6 +112,7 @@ export default {
     SprintEditDialog,
     SprintDeleteDialog,
     SprintCompleteDialog,
+    SprintStartDialog,
   },
 
   props: {
@@ -124,6 +128,7 @@ export default {
       showDeleteSprintDialog: false,
       showCreateTaskDialog: false,
       showCompleteSprintDialog: false,
+      showSprintStartDialog: false,
     };
   },
 
@@ -143,7 +148,8 @@ export default {
     ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
 
     startSprint() {
-      this.$emit("start-sprint", this.sprint.id);
+      // this.$emit("start-sprint", this.sprint.id);
+      this.showSprintStartDialog = true;
     },
 
     completeSprint() {
