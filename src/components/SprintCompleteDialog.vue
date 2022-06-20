@@ -69,8 +69,12 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import axios from "axios";
+import { SPRINT_API } from "@/factories/sprint.js";
+import { CookieService } from "@/services/CookieService.js";
+import { mapGetters, mapActions } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 
 export default {
   name: "sprint-complete-dialog",
@@ -96,8 +100,11 @@ export default {
     }
 
     this.sprints.unshift({ id: 0, name: "Backlog" });
-
-    this.chosenSprint = this.sprints[1];
+    if (this.sprints.length > 1) {
+      this.chosenSprint = this.sprints[1].id;
+    } else {
+      this.chosenSprint = 0;
+    }
 
     if (this.sprint.tasks) {
       this.openedTask = this.sprint.tasks.filter((task) => task.status !== 4);
@@ -120,12 +127,29 @@ export default {
   },
 
   methods: {
-    completeSprint() {
-      this.showCompleteSprintDialog = false;
+    ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
 
+    completeSprint() {
       let formData = new FormData();
-      formData.append("complete_sprint", this.sprint);
-      formData.append("move_to", this.chosenSprint);
+      formData.append("id", this.sprint.id);
+      let nextSprintId = null;
+      if (this.chosenSprint && this.chosenSprint !== 0) {
+        nextSprintId = this.chosenSprint;
+      }
+      formData.append("next_sprint_id", nextSprintId);
+
+      axios
+        .post(SPRINT_API.compeleteSprintApi, formData, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          this.updateProject(res.data.project);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
+
+      this.showCompleteSprintDialog = false;
     },
   },
 };

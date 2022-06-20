@@ -6,9 +6,7 @@ export const startSprintApi = (id) => {
     return BASE_URL + `/sprint/start-sprint/${id}`
 }
 
-export const compeleteSprintApi = (id) => {
-    return BASE_URL + `/sprint/complete-sprint/${id}`
-}
+export const compeleteSprintApi = BASE_URL + `/sprint/complete-sprint`
 
 export const deleteSprintApi = (id) => {
     return BASE_URL + `/sprint/delete/${id}`

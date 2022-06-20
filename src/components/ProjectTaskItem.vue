@@ -105,7 +105,7 @@ export default {
     sprintListToMove() {
       let sprintListToMove = [];
       sprintListToMove = this.project.sprints.filter(
-        (sprint) => sprint.id !== this.task.sprint_id
+        (sprint) => sprint.id !== this.task.sprint_id && sprint.status !== 3
       );
 
       return sprintListToMove;
