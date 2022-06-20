@@ -108,7 +108,7 @@ export default {
         this.goToProjectReview();
       }
       if (menuItemId === 5) {
-        console.log(menuItemId);
+        this.goToProjectRetro();
       }
     },
 
@@ -132,6 +132,12 @@ export default {
 
     goToProjectReview() {
       this.$router.push(`/my-project/${this.projectId}/review`).catch(() => {});
+    },
+
+    goToProjectRetro() {
+      this.$router
+        .push(`/my-project/${this.projectId}/retrospective`)
+        .catch(() => {});
     },
   },
 };

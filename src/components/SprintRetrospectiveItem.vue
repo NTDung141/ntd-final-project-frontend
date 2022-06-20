@@ -1,39 +1,41 @@
 <template>
-  <div class="sprint-review">
-    <v-card elevation="0" class="sprint-review-item">
+  <div class="sprint-retro">
+    <v-card elevation="0" class="sprint-retro-item">
       <v-card-title>
-        <div class="sprint-review-item-title">{{ sprint.name }}</div>
+        <div class="sprint-retro-item-title">{{ sprint.name }}</div>
 
         <v-spacer></v-spacer>
 
-        <div v-if="sprint.status === 3" class="sprint-review-completed">
+        <div v-if="sprint.status === 3" class="sprint-retro-completed">
           Completed
           <i class="fas fa-check completed-icon ml-2"></i>
         </div>
 
-        <div class="sprint-review-actions" v-if="sprint.status !== 3">
+        <div class="sprint-retro-actions" v-if="sprint.status !== 3">
           <v-btn small color="primary" @click="isEditting = true">Edit</v-btn>
         </div>
       </v-card-title>
 
       <div
         class="empty-content"
-        v-if="(!sprint.review || sprint.review === '') && !isEditting"
+        v-if="
+          (!sprint.retrospective || sprint.retrospective === '') && !isEditting
+        "
       >
-        There are no review in this sprint
+        There are no retrospective in this sprint
       </div>
 
       <div
         class="content"
-        v-if="sprint.review && !isEditting"
+        v-if="sprint.retrospective && !isEditting"
         v-html="content"
       ></div>
 
       <v-card-text v-if="isEditting">
         <vue-editor v-model="content"></vue-editor>
         <v-card-actions>
-          <v-btn color="primary" small @click="changeReview">Save</v-btn>
-          <v-btn small @click="cancelChangeReview">Cancel</v-btn>
+          <v-btn color="primary" small @click="changeRetro">Save</v-btn>
+          <v-btn small @click="cancelChangeRetro">Cancel</v-btn>
         </v-card-actions>
       </v-card-text>
     </v-card>
@@ -48,7 +50,7 @@ import { CookieService } from "@/services/CookieService.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 import { mapActions } from "vuex";
 export default {
-  name: "sprint-review-item",
+  name: "sprint-retrospective-item",
 
   props: {
     sprint: Object,
@@ -66,18 +68,18 @@ export default {
   },
 
   beforeMount() {
-    if (this.sprint.review) {
-      this.content = this.sprint.review;
+    if (this.sprint.retrospective) {
+      this.content = this.sprint.retrospective;
     }
   },
 
   methods: {
     ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
 
-    changeReview() {
+    changeRetro() {
       const formData = new FormData();
       formData.append("id", this.sprint.id);
-      formData.append("review", this.content);
+      formData.append("retrospective", this.content);
 
       axios
         .post(SPRINT_API.updateApi, formData, {
@@ -93,9 +95,9 @@ export default {
       this.isEditting = false;
     },
 
-    cancelChangeReview() {
-      if (this.sprint.review) {
-        this.content = this.sprint.review;
+    cancelChangeRetro() {
+      if (this.sprint.retrospective) {
+        this.content = this.sprint.retrospective;
       }
 
       this.isEditting = false;
@@ -105,22 +107,22 @@ export default {
 </script>
 
 <style scoped>
-.sprint-review {
+.sprint-retro {
   margin-bottom: 30px;
 }
 
-.sprint-review-item {
+.sprint-retro-item {
   width: 100%;
   background: #f4f5f7 !important;
   border-radius: 5px;
   padding: 0px 10px 20px 10px;
 }
 
-.sprint-review-item-title {
+.sprint-retro-item-title {
   font-size: 16px;
 }
 
-.sprint-review-item-create-task {
+.sprint-retro-item-create-task {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -128,7 +130,7 @@ export default {
   min-height: 30px;
 }
 
-.sprint-review-completed {
+.sprint-retro-completed {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -137,7 +139,7 @@ export default {
   margin-right: 8px;
 }
 
-.sprint-review-actions {
+.sprint-retro-actions {
   display: flex;
   justify-content: flex-start;
   align-items: center;

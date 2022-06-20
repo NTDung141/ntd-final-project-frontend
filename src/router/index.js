@@ -11,6 +11,7 @@ import ProjectBacklog from '../components/ProjectBacklog.vue'
 import ProjectBoard from "@/components/ProjectBoard.vue"
 import ProjectGoal from "@/components/ProjectGoal.vue"
 import ProjectReview from "@/components/ProjectReview.vue"
+import ProjectRetrospective from "@/components/ProjectRetrospective"
 
 Vue.use(VueRouter)
 
@@ -37,6 +38,7 @@ const routes = [
       { path: "backlog", component: ProjectBacklog },
       { path: "goal", component: ProjectGoal },
       { path: "review", component: ProjectReview },
+      { path: "retrospective", component: ProjectRetrospective },
     ],
     beforeEnter: beforeEnter
   },
