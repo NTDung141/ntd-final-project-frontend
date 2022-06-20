@@ -105,7 +105,7 @@ export default {
         this.goToProjectGoal();
       }
       if (menuItemId === 4) {
-        console.log(menuItemId);
+        this.goToProjectReview();
       }
       if (menuItemId === 5) {
         console.log(menuItemId);
@@ -128,6 +128,10 @@ export default {
 
     goToProjectGoal() {
       this.$router.push(`/my-project/${this.projectId}/goal`).catch(() => {});
+    },
+
+    goToProjectReview() {
+      this.$router.push(`/my-project/${this.projectId}/review`).catch(() => {});
     },
   },
 };
