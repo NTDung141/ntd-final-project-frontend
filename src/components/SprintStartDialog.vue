@@ -104,9 +104,9 @@
 </template>
 
 <script>
-// import axios from "axios";
-// import { SPRINT_API } from "@/factories/sprint.js";
-// import { CookieService } from "@/services/CookieService.js";
+import axios from "axios";
+import { SPRINT_API } from "@/factories/sprint.js";
+import { CookieService } from "@/services/CookieService.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 import { mapActions } from "vuex";
 
@@ -182,22 +182,27 @@ export default {
     ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
 
     startSprint() {
-      //   const formData = new FormData();
-      //   formData.append("id", this.sprint.id);
-      //   formData.append("name", this.sprintName);
-      //   formData.append("start_date", this.startDate);
-      //   formData.append("end_date", this.endDate);
-
-      //   axios
-      //     .post(SPRINT_API.updateApi, formData, {
-      //       headers: CookieService.authHeader(),
-      //     })
-      //     .then((res) => {
-      //       this.updateProject(res.data.project);
-      //     })
-      //     .catch((err) => {
-      //       console.log(err.response.data);
-      //     });
+      const formData = new FormData();
+      formData.append("id", this.sprint.id);
+      if (this.sprint.name !== this.sprintName) {
+        formData.append("name", this.sprintName);
+      }
+      if (this.sprint.start_date !== this.startDate) {
+        formData.append("start_date", this.startDate);
+      }
+      if (this.sprint.start_date !== this.startDate) {
+        formData.append("end_date", this.endDate);
+      }
+      axios
+        .post(SPRINT_API.startSprintApi, formData, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          this.updateProject(res.data.project);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
 
       this.showSprintStartDialog = false;
     },

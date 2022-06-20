@@ -10,7 +10,7 @@
           v-if="sprint.status === 1"
           small
           depressed
-          color="grey lighten-2"
+          color="primary"
           :disabled="disableBtn"
           class="mr-2"
           @click="startSprint"
@@ -21,7 +21,7 @@
           v-if="sprint.status === 2"
           small
           depressed
-          color="grey lighten-2"
+          color="primary"
           class="mr-2"
           @click="completeSprint"
         >
