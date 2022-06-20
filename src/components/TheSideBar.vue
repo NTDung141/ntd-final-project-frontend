@@ -102,7 +102,7 @@ export default {
         this.goToProjectBoard();
       }
       if (menuItemId === 3) {
-        console.log(menuItemId);
+        this.goToProjectGoal();
       }
       if (menuItemId === 4) {
         console.log(menuItemId);
@@ -124,6 +124,10 @@ export default {
 
     goToProjectBoard() {
       this.$router.push(`/my-project/${this.projectId}`).catch(() => {});
+    },
+
+    goToProjectGoal() {
+      this.$router.push(`/my-project/${this.projectId}/goal`).catch(() => {});
     },
   },
 };

@@ -9,6 +9,7 @@ import ProjectPage from '../views/ProjectPage.vue'
 import Cookies from "js-cookie";
 import ProjectBacklog from '../components/ProjectBacklog.vue'
 import ProjectBoard from "@/components/ProjectBoard.vue"
+import ProjectGoal from "@/components/ProjectGoal.vue"
 
 Vue.use(VueRouter)
 
@@ -32,7 +33,8 @@ const routes = [
     component: ProjectPage,
     children: [
       { path: "", component: ProjectBoard },
-      { path: "backlog", component: ProjectBacklog }
+      { path: "backlog", component: ProjectBacklog },
+      { path: "goal", component: ProjectGoal }
     ],
     beforeEnter: beforeEnter
   },
