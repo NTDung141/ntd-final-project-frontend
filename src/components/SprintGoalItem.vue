@@ -12,21 +12,24 @@
         </div>
 
         <div class="sprint-goal-actions" v-if="sprint.status !== 3">
-          <v-btn small color="primary" @click="isEditting = true">Edit</v-btn>
+          <v-btn small color="primary" @click="onEdit">Edit</v-btn>
         </div>
       </v-card-title>
 
       <div
         class="empty-content"
-        v-if="(!sprint.goal || sprint.goal === '') && !isEditting"
+        v-if="
+          (!sprint.goal || sprint.goal === '' || sprint.goal === 'null') &&
+          !isEditting
+        "
       >
         There are no goal in this sprint
       </div>
 
       <div
         class="content"
-        v-if="sprint.goal && !isEditting"
-        v-html="content"
+        v-if="sprint.goal && !isEditting && sprint.goal !== 'null'"
+        v-html="sprint.goal"
       ></div>
 
       <v-card-text v-if="isEditting">
@@ -60,7 +63,7 @@ export default {
 
   data() {
     return {
-      content: "",
+      content: this.sprint.goal,
       isEditting: false,
     };
   },
@@ -74,10 +77,25 @@ export default {
   methods: {
     ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
 
+    onEdit() {
+      if (this.sprint.goal && this.sprint.goal !== "null") {
+        this.content = this.sprint.goal;
+      } else {
+        this.content = "";
+      }
+      this.isEditting = true;
+    },
+
     changeGoal() {
       const formData = new FormData();
       formData.append("id", this.sprint.id);
-      formData.append("goal", this.content);
+      if (this.content !== "") {
+        formData.append("goal", this.content);
+      } else {
+        formData.append("goal", null);
+      }
+
+      console.log(this.content);
 
       axios
         .post(SPRINT_API.updateApi, formData, {
@@ -85,9 +103,11 @@ export default {
         })
         .then((res) => {
           this.updateProject(res.data.project);
+          this.content = this.sprint.goal;
         })
         .catch((err) => {
           console.log(err.response.data);
+          this.content = this.sprint.goal;
         });
 
       this.isEditting = false;
@@ -156,17 +176,15 @@ export default {
 }
 
 .content {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  display: block;
   margin-top: 5px;
   min-height: 40px;
-  /* border: 2px dashed #dfe1e6; */
   border-radius: 3px;
-  font-size: 14px;
+  font-size: 16px;
   color: #6b778c;
   background-color: #fff;
   padding: 10px 10px;
+  text-align: left;
 }
 
 .completed-icon {

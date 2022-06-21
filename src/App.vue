@@ -63,4 +63,8 @@ export default {
   margin-bottom: 20px;
   margin-top: 10px;
 }
+
+.v-application p {
+  margin-bottom: 0px !important;
+}
 </style>

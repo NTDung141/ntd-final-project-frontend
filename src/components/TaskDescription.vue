@@ -31,16 +31,21 @@
       <div class="feature-label flex-start mb-3">Description</div>
 
       <div
-        v-if="!isEditting && task.description"
-        v-html="content"
+        v-if="!isEditting && task.description && task.description !== 'null'"
+        v-html="this.task.description"
         class="task-description task-feature-value"
-        @click="isEditting = true"
+        @click="onEditDescription"
       ></div>
 
       <div
-        v-if="!isEditting && !task.description"
+        v-if="
+          !isEditting &&
+          (!task.description ||
+            task.description === '' ||
+            task.description === 'null')
+        "
         class="task-description task-feature-value"
-        @click="isEditting = true"
+        @click="onEditDescription"
       >
         There is no description
       </div>
@@ -88,6 +93,15 @@ export default {
   methods: {
     ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
 
+    onEditDescription() {
+      if (this.task.description && this.task.description !== "null") {
+        this.content = this.task.description;
+      } else {
+        this.content = "";
+      }
+      this.isEditting = true;
+    },
+
     updateTaskAxios(updateTask) {
       axios
         .post(TASK_API.updateApi, updateTask, {
@@ -96,10 +110,12 @@ export default {
         .then((res) => {
           if (res.data && res.data.project) {
             this.updateProject(res.data.project);
+            this.content = this.task.description;
           }
         })
         .catch((err) => {
           console.log(err);
+          this.content = this.task.description;
         });
     },
 
@@ -121,7 +137,11 @@ export default {
     changeDescription() {
       const updateTask = new FormData();
       updateTask.append("id", this.task.id);
-      updateTask.append("description", this.content);
+      if (this.content !== "") {
+        updateTask.append("description", this.content);
+      } else {
+        updateTask.append("description", null);
+      }
 
       this.isEditting = false;
 
