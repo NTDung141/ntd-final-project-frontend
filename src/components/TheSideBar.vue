@@ -20,66 +20,43 @@
     <v-divider></v-divider>
 
     <v-list dense>
-      <v-list-group
-        prepend-icon="far fa-list-alt"
-        append-icon=""
-        @click="goToProjectBacklog"
-      >
-        <template v-slot:activator>
+      <v-list-item-group :value="currentTabIndex" mandatory color="primary">
+        <v-list-item
+          class="sidebar-sprint-subitem"
+          v-for="menuItem in menuItems"
+          :key="menuItem.name"
+          @click="menuItemAction(menuItem.id)"
+        >
+          <v-list-item-icon>
+            <v-icon small>{{ menuItem.icon }}</v-icon>
+          </v-list-item-icon>
+
           <v-list-item-content>
-            <v-list-item-title>Product Backlog</v-list-item-title>
+            <v-list-item-title>{{ menuItem.name }}</v-list-item-title>
           </v-list-item-content>
-        </template>
-      </v-list-group>
+        </v-list-item>
 
-      <v-list-group
-        class="sidebar-sprint"
-        prepend-icon="fas fa-repeat"
-        append-icon="fas fa-caret-down"
-        color="primary"
-      >
-        <template v-slot:activator>
+        <v-divider></v-divider>
+
+        <v-list-item class="sidebar-sprint-subitem" @click="goToProjectDetail">
+          <v-list-item-icon>
+            <v-icon small>fas fa-cog</v-icon>
+          </v-list-item-icon>
+
           <v-list-item-content>
-            <v-list-item-title>Active Sprint</v-list-item-title>
+            <v-list-item-title>Project Setting</v-list-item-title>
           </v-list-item-content>
-        </template>
-
-        <v-list-item-group>
-          <v-list-item
-            class="sidebar-sprint-subitem"
-            v-for="sprintSubItem in sprintSubItems"
-            :key="sprintSubItem.name"
-            link
-          >
-            <v-list-item-icon>
-              <v-icon>{{ sprintSubItem.icon }}</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>{{ sprintSubItem.name }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list-group>
+        </v-list-item>
+      </v-list-item-group>
     </v-list>
-
-    <v-divider></v-divider>
-
-    <v-list-group
-      prepend-icon="fas fa-cog"
-      append-icon=""
-      @click="goToProjectDetail"
-    >
-      <template v-slot:activator>
-        <v-list-item-content>
-          <v-list-item-title> Project Setting </v-list-item-title>
-        </v-list-item-content>
-      </template>
-    </v-list-group>
   </v-navigation-drawer>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import SIDEBAR_GETTERS from "@/store/modules/sidebar/sidebar-getters.js";
+import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
+
 export default {
   name: "the-side-bar",
 
@@ -90,37 +67,48 @@ export default {
   data() {
     return {
       isShowSidebar: true,
-      showingSprintId: -1,
 
-      sprints: [
-        { id: 1, name: "Sprint 1" },
-        { id: 2, name: "Sprint 2" },
-        { id: 3, name: "Sprint 3" },
-      ],
-
-      sprintSubItems: [
-        { name: "Backlog", icon: "far fa-list-alt" },
-        { name: "Board", icon: "fas fa-columns" },
-        { name: "Review", icon: "fas fa-check-square" },
-        { name: "Retrospective", icon: "fas fa-thumbtack" },
+      menuItems: [
+        { id: 1, name: "Backlog", icon: "far fa-list-alt" },
+        { id: 2, name: "Board", icon: "fas fa-columns" },
+        { id: 3, name: "Goal", icon: "fas fa-bullseye" },
+        { id: 4, name: "Review", icon: "fas fa-check-square" },
+        { id: 5, name: "Retrospective", icon: "fas fa-thumbtack" },
       ],
 
       drawer: true,
-      mini: true,
+      mini: false,
     };
   },
 
+  computed: {
+    ...mapGetters({
+      currentTabIndex: SIDEBAR_GETTERS.currentTabIndex,
+    }),
+  },
+
   methods: {
+    ...mapActions({ changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex }),
+
     toggleSidebar() {
       this.isShowSidebar = !this.isShowSidebar;
-      console.log(this.isShowSidebar);
     },
 
-    changeShowingSprintId(id) {
-      if (id === this.showingSprintId) {
-        this.showingSprintId = -1;
-      } else {
-        this.showingSprintId = id;
+    menuItemAction(menuItemId) {
+      if (menuItemId === 1) {
+        this.goToProjectBacklog();
+      }
+      if (menuItemId === 2) {
+        this.goToProjectBoard();
+      }
+      if (menuItemId === 3) {
+        this.goToProjectGoal();
+      }
+      if (menuItemId === 4) {
+        this.goToProjectReview();
+      }
+      if (menuItemId === 5) {
+        this.goToProjectRetro();
       }
     },
 
@@ -129,7 +117,27 @@ export default {
     },
 
     goToProjectBacklog() {
-      this.$router.push(`/my-project/${this.projectId}`);
+      this.$router
+        .push({ path: `/my-project/${this.projectId}/backlog` })
+        .catch(() => {});
+    },
+
+    goToProjectBoard() {
+      this.$router.push(`/my-project/${this.projectId}`).catch(() => {});
+    },
+
+    goToProjectGoal() {
+      this.$router.push(`/my-project/${this.projectId}/goal`).catch(() => {});
+    },
+
+    goToProjectReview() {
+      this.$router.push(`/my-project/${this.projectId}/review`).catch(() => {});
+    },
+
+    goToProjectRetro() {
+      this.$router
+        .push(`/my-project/${this.projectId}/retrospective`)
+        .catch(() => {});
     },
   },
 };
@@ -150,6 +158,6 @@ export default {
 }
 
 .sidebar-sprint-subitem {
-  padding: 0px 0px 0px 30px !important;
+  padding: 0px 0px 0px 16px !important;
 }
 </style>

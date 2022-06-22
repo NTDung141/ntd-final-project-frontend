@@ -7,18 +7,32 @@
         {{ project.name }}
       </router-link>
     </div>
+
+    <div class="project-backlog-header">
+      <div class="backlog-name">Backlog</div>
+    </div>
+
+    <div class="project-backlog-header">
+      <v-text-field
+        class="search-bar"
+        dense
+        outlined
+        append-icon="fas fa-search"
+      ></v-text-field>
+    </div>
+
     <ProjectSprintItem
       v-for="sprint in project.sprints"
-      :key="sprint.name"
+      :key="sprint.id"
       :sprint="sprint"
       :disableBtn="Boolean(isDisableStartSprintBtn())"
+      :projectKey="project.key"
+      :projectId="project.id"
       @start-sprint="startSprint"
-      @delete-sprint="deleteSprint"
       @complete-sprint="completeSprint"
-      @update-sprint="updateSprint"
     />
 
-    <ProjectBacklogList @create-sprint="createSprint" />
+    <ProjectBacklogList :project="project" @create-sprint="createSprint" />
   </div>
 </template>
 
@@ -26,9 +40,14 @@
 import ProjectBacklogList from "@/components/ProjectBacklogList.vue";
 import ProjectSprintItem from "@/components/ProjectSprintItem.vue";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { SPRINT_API } from "@/factories/sprint.js";
 import { CookieService } from "@/services/CookieService.js";
+import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
+import { mapActions } from "vuex";
+import { mapGetters } from "vuex";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+import { PROJECT_API } from "@/factories/project.js";
+import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
 
 export default {
   name: "project-backlog",
@@ -38,31 +57,28 @@ export default {
     ProjectSprintItem,
   },
 
+  computed: {
+    ...mapGetters({
+      project: PROJECT_GETTERS.project,
+    }),
+  },
+
   data() {
     return {
       projectId: this.$route.params.id,
-      project: {},
-      sprints: [
-        { id: 1, name: "Sprint 1", status: 2 },
-        { id: 2, name: "Sprint 2", status: 1 },
-        { id: 3, name: "25 Sprint 32", status: 1 },
-      ],
     };
   },
 
   beforeMount() {
-    const accessToken = Cookies.get("accessToken");
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
+    this.changeTabIndex(0);
 
     axios
-      .get(`http://127.0.0.1:8000/api/project/${this.projectId}`, {
-        headers: headers,
+      .get(PROJECT_API.getProjectByIdApi(this.projectId), {
+        headers: CookieService.authHeader(),
       })
       .then((res) => {
         if (res.data && res.data.project) {
-          this.project = res.data.project;
+          this.updateProject(res.data.project);
         }
       })
       .catch((err) => {
@@ -71,6 +87,11 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      updateProject: PROJECT_ACTIONS.updateProject,
+      changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex,
+    }),
+
     isDisableStartSprintBtn() {
       let isDisable = false;
       this.project.sprints.forEach((sprint) => {
@@ -91,7 +112,7 @@ export default {
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            this.project = res.data.project;
+            this.updateProject(res.data.project);
             this.isDisableStartSprintBtn();
           }
         })
@@ -123,7 +144,7 @@ export default {
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            this.project = res.data.project;
+            this.updateProject(res.data.project);
             this.isDisableStartSprintBtn();
           }
         })
@@ -139,48 +160,9 @@ export default {
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            this.project = res.data.project;
+            this.updateProject(res.data.project);
             this.isDisableStartSprintBtn();
           }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
-    deleteSprint(id) {
-      axios
-        .delete(SPRINT_API.deleteSprintApi(id), {
-          headers: CookieService.authHeader(),
-          data: {},
-        })
-        .then((res) => {
-          if (res.data && res.data.project) {
-            this.project = res.data.project;
-            this.isDisableStartSprintBtn();
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
-    updateSprint(data) {
-      const formData = new FormData();
-      formData.append("id", data.id);
-      formData.append("name", data.name);
-      formData.append("start_date", data.startDate);
-      formData.append("end_date", data.endDate);
-      for (var value of formData.values()) {
-        console.log(value);
-      }
-
-      axios
-        .post(SPRINT_API.updateApi, formData, {
-          headers: CookieService.authHeader(),
-        })
-        .then((res) => {
-          console.log(res);
         })
         .catch((err) => {
           console.log(err);
@@ -194,7 +176,24 @@ export default {
 .project-backlog {
   width: 96%;
   height: 100%;
-  padding: 20px 30px;
+  padding: 20px 30px 150px 30px;
   overflow-x: hidden;
+  margin-bottom: 30px;
+}
+
+.project-backlog-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.search-bar {
+  max-width: 300px !important;
+}
+
+.backlog-name {
+  font-size: 23px;
+  font-weight: 500;
 }
 </style>
