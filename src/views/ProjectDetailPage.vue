@@ -1,17 +1,31 @@
 <template>
   <div class="project-detail-page">
+    <div class="project-link">
+      <router-link to="/my-project">My Project</router-link>
+      <span class="ml-1 mr-1">/</span>
+
+      <router-link :to="`/my-project/${this.projectId}`">
+        {{ project.name }}
+      </router-link>
+      <span class="ml-1 mr-1">/</span>
+
+      <router-link :to="`/my-project/settings/${this.projectId}`">
+        Project settings
+      </router-link>
+    </div>
+
     <ProjectDetail :project="project" @change-name-and-key="changeNameAndKey" />
 
     <ProjectDetailAccess :project="project" @update-project="updateProject" />
 
-    <ProjectDetailSprint />
+    <!-- <ProjectDetailSprint /> -->
   </div>
 </template>
 
 <script>
 import ProjectDetail from "@/components/ProjectDetail.vue";
 import ProjectDetailAccess from "@/components/ProjectDetailAccess.vue";
-import ProjectDetailSprint from "@/components/ProjectDetailSprint.vue";
+// import ProjectDetailSprint from "@/components/ProjectDetailSprint.vue";
 import axios from "axios";
 import Cookies from "js-cookie";
 
@@ -28,7 +42,7 @@ export default {
   components: {
     ProjectDetail,
     ProjectDetailAccess,
-    ProjectDetailSprint,
+    // ProjectDetailSprint,
   },
 
   beforeMount() {
