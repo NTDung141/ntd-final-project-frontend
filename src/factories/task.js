@@ -8,8 +8,13 @@ export const deleteApi = (id) => {
     return BASE_URL + `/task/delete/${id}`
 }
 
+export const getByIdApi = (id) => {
+    return BASE_URL + `/task/${id}`
+}
+
 export const TASK_API = {
     createApi,
     updateApi,
-    deleteApi
+    deleteApi,
+    getByIdApi
 }
