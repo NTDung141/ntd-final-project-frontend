@@ -2,7 +2,7 @@
   <v-card-text>
     <div class="feature-label flex-start mb-3">Activities & Comments</div>
 
-    <div class="task-comment-list">
+    <div class="task-comment-list" :ref="`list-${task.id}`">
       <div
         class="task-comment-item"
         v-for="comment in commentList"
@@ -21,7 +21,7 @@
           <v-spacer></v-spacer>
 
           <div class="comment-icon-delete">
-            <i class="fas fa-trash" @click="deleteComment(comment)"></i>
+            <i class="fas fa-trash mr-2" @click="deleteComment(comment)"></i>
           </div>
         </div>
       </div>
@@ -46,8 +46,6 @@
 import axios from "axios";
 import { CookieService } from "@/services/CookieService.js";
 import { COMMENT_API } from "@/factories/comment.js";
-// import REALTIMECOMMENT_GETTERS from "@/store/modules/realtimeComment/realtimeComment-getters";
-// import { mapGetters } from "vuex";
 export default {
   name: "task-activity",
 
@@ -57,10 +55,6 @@ export default {
   },
 
   computed: {
-    // ...mapGetters({
-    //   commentList: REALTIMECOMMENT_GETTERS.commentList,
-    // }),
-
     commentListComputed() {
       if (this.task.id) {
         return this.commentList.filter(
@@ -141,6 +135,8 @@ export default {
 .task-comment-list {
   display: block;
   width: 100%;
+  overflow: auto;
+  max-height: 180px;
 }
 
 .task-comment-item {
