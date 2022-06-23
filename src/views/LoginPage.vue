@@ -125,7 +125,7 @@ export default {
               Cookies.set("accessToken", res.data.access_token);
               Cookies.set("userInfo", JSON.stringify(res.data.user));
               this.login(res.data.user);
-              this.$router.push("/");
+              this.$router.push("/my-project");
             }
           })
           .catch((err) => {
