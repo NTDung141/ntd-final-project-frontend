@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
-    <form>
-      <v-card class="login-form" elevation="5">
+    <div class="login-form">
+      <form>
         <v-card-title class="login-form-title">Sign in</v-card-title>
 
         <v-text-field
@@ -45,8 +45,8 @@
           <div class="mr-3">New to app?</div>
           <router-link to="/register">Sign up now</router-link>
         </div>
-      </v-card>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -165,12 +165,14 @@ export default {
 
 .login-form {
   margin: auto;
-  margin-top: 60px;
+  margin-top: 10%;
   padding: 20px 20px;
   min-width: 300px !important;
   min-height: 300px !important;
   max-width: 400px !important;
   max-height: 450px !important;
+  border: solid 1px gray;
+  border-radius: 7px;
 }
 
 .login-form-title {
