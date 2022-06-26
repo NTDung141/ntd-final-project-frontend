@@ -12,6 +12,7 @@ import ProjectBoard from "@/components/ProjectBoard.vue"
 import ProjectGoal from "@/components/ProjectGoal.vue"
 import ProjectReview from "@/components/ProjectReview.vue"
 import ProjectRetrospective from "@/components/ProjectRetrospective"
+import UserProfilePage from "@/views/UserProfilePage.vue"
 
 Vue.use(VueRouter)
 
@@ -42,7 +43,8 @@ const routes = [
     ],
     beforeEnter: beforeEnter
   },
-  { path: "/my-project/settings/:id", component: ProjectDetailPage, beforeEnter: beforeEnter }
+  { path: "/my-project/settings/:id", component: ProjectDetailPage, beforeEnter: beforeEnter },
+  { path: "/my-profile", component: UserProfilePage, beforeEnter: beforeEnter }
 ]
 
 export const router = new VueRouter({

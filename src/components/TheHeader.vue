@@ -35,8 +35,8 @@
               </v-avatar>
             </template>
             <v-list>
-              <v-list-item>
-                <v-list-item-title>User Profile</v-list-item-title>
+              <v-list-item @click="goToMyProfile">
+                <v-list-item-title>My Profile</v-list-item-title>
               </v-list-item>
 
               <v-list-item @click="onLogout()">
@@ -110,6 +110,10 @@ export default {
             }
           });
       }
+    },
+
+    goToMyProfile() {
+      this.$router.push("/my-profile");
     },
   },
 };
