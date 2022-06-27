@@ -13,6 +13,7 @@
         <ProjectCreate
           :visible="showProjectCreate"
           @close="showProjectCreate = false"
+          @fetch-project-list="fetchProjectList"
         />
       </v-card-title>
 
@@ -66,7 +67,8 @@
 <script>
 import ProjectCreate from "@/components/ProjectCreate.vue";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { PROJECT_API } from "@/factories/project.js";
+import { CookieService } from "@/services/CookieService.js";
 
 export default {
   name: "projects-page",
@@ -102,29 +104,27 @@ export default {
   },
 
   mounted() {
-    const accessToken = Cookies.get("accessToken");
-    console.log("token", accessToken);
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    axios
-      .get("http://127.0.0.1:8000/api/project/get-all", {
-        headers: headers,
-      })
-      .then((res) => {
-        if (res.data && res.data.projects) {
-          this.projects = res.data.projects;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    this.fetchProjectList();
   },
 
   methods: {
     editItem(item) {
       this.$router.push(`/my-project/settings/${item.id}`);
+    },
+
+    fetchProjectList() {
+      axios
+        .get(PROJECT_API.getAllApi, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.projects) {
+            this.projects = res.data.projects;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
