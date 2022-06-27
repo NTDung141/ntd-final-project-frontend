@@ -112,6 +112,21 @@ export default {
       this.$router.push(`/my-project/settings/${item.id}`);
     },
 
+    deleteItem(item) {
+      axios
+        .delete(PROJECT_API.deleteApi(item.id), {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.projects) {
+            this.projects = res.data.projects;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
     fetchProjectList() {
       axios
         .get(PROJECT_API.getAllApi, {

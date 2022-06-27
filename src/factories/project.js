@@ -12,9 +12,14 @@ export const getActiveSprintApi = (projectId) => {
     return BASE_URL + `/project/active-sprint/${projectId}`
 }
 
+export const deleteApi = (projectId) => {
+    return BASE_URL + `/project/delete/${projectId}`
+}
+
 export const PROJECT_API = {
     createApi,
     getAllApi,
     getProjectByIdApi,
-    getActiveSprintApi
+    getActiveSprintApi,
+    deleteApi
 }
