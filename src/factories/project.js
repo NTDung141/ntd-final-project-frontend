@@ -16,10 +16,13 @@ export const deleteApi = (projectId) => {
     return BASE_URL + `/project/delete/${projectId}`
 }
 
+export const removePeopleApi = BASE_URL + "/project/update/remove-people"
+
 export const PROJECT_API = {
     createApi,
     getAllApi,
     getProjectByIdApi,
     getActiveSprintApi,
-    deleteApi
+    deleteApi,
+    removePeopleApi
 }
