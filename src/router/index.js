@@ -14,11 +14,12 @@ import ProjectReview from "@/components/ProjectReview.vue"
 import ProjectRetrospective from "@/components/ProjectRetrospective"
 import UserProfilePage from "@/views/UserProfilePage.vue"
 import AdminPage from "@/views/AdminPage.vue"
+import AdminUserManagement from "@/components/AdminUserManagement.vue"
 
 Vue.use(VueRouter)
 
 function beforeEnter(to, from, next) {
-  const userInfo = Cookies.get("userInfo");
+  const userInfo = JSON.parse(Cookies.get("userInfo"));
   if (userInfo) {
     next()
   }
@@ -46,7 +47,13 @@ const routes = [
   },
   { path: "/my-project/settings/:id", component: ProjectDetailPage, beforeEnter: beforeEnter },
   { path: "/my-profile", component: UserProfilePage, beforeEnter: beforeEnter },
-  { path: "/admin", component: AdminPage, beforeEnter: beforeEnter }
+  {
+    path: "/admin",
+    component: AdminPage,
+    children: [
+      { path: "", component: AdminUserManagement }
+    ], beforeEnter: beforeEnter
+  }
 ]
 
 export const router = new VueRouter({

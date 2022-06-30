@@ -1,14 +1,36 @@
 <template>
-  <div>
-    <h1>Admin page</h1>
+  <div class="admin-page">
+    <AdminSideBar />
+
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
+import AdminSideBar from "@/components/AdminSideBar.vue";
 export default {
   name: "admin-page",
+
+  components: {
+    AdminSideBar,
+  },
+
+  methods: {
+    ...mapActions({ changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex }),
+  },
+
+  mounted() {
+    this.changeTabIndex(0);
+  },
 };
 </script>
 
-<style>
+<style scoped>
+.admin-page {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
 </style>
