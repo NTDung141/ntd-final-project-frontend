@@ -11,7 +11,7 @@ import { mapActions } from "vuex";
 import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
 import AdminSideBar from "@/components/AdminSideBar.vue";
 export default {
-  name: "admin-page",
+  name: "admin-layout",
 
   components: {
     AdminSideBar,

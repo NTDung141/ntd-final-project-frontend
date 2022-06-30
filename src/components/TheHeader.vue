@@ -122,10 +122,11 @@ export default {
 
 <style scoped>
 .my-header {
-  z-index: 3;
+  z-index: 10;
 }
 .my-toolbar {
   padding: 0px 20%;
+  z-index: 10;
 }
 
 .my-toolbar-action {

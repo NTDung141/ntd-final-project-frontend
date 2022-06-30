@@ -1,7 +1,5 @@
 <template>
   <v-app id="app">
-    <TheHeader />
-
     <div class="wrapper">
       <router-view />
     </div>
@@ -9,7 +7,6 @@
 </template>
 
 <script>
-import TheHeader from "./components/TheHeader.vue";
 import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
 import REALTIMECOMMENT_ACTIONS from "@/store/modules/realtimeComment/realtimeComment-actions";
 import { mapActions } from "vuex";
@@ -19,10 +16,6 @@ import { CookieService } from "@/services/CookieService.js";
 
 export default {
   name: "App",
-
-  components: {
-    TheHeader,
-  },
 
   data() {
     return {
@@ -90,6 +83,7 @@ export default {
 
 .wrapper {
   height: 100%;
+  z-index: 0;
 }
 
 .project-link {

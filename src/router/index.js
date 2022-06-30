@@ -13,14 +13,25 @@ import ProjectGoal from "@/components/ProjectGoal.vue"
 import ProjectReview from "@/components/ProjectReview.vue"
 import ProjectRetrospective from "@/components/ProjectRetrospective"
 import UserProfilePage from "@/views/UserProfilePage.vue"
-import AdminPage from "@/views/AdminPage.vue"
 import AdminUserManagement from "@/components/AdminUserManagement.vue"
+import AdminLayout from "@/layouts/AdminLayout.vue"
+import UserLayout from "@/layouts/UserLayout.vue"
 
 Vue.use(VueRouter)
 
 function beforeEnter(to, from, next) {
   const userInfo = JSON.parse(Cookies.get("userInfo"));
-  if (userInfo) {
+  if (userInfo && userInfo.is_admin == 0) {
+    next()
+  }
+  else {
+    next('/login')
+  }
+}
+
+function beforeEnterAdmin(to, from, next) {
+  const userInfo = JSON.parse(Cookies.get("userInfo"));
+  if (userInfo && userInfo.is_admin == 1) {
     next()
   }
   else {
@@ -29,30 +40,37 @@ function beforeEnter(to, from, next) {
 }
 
 const routes = [
-  { path: "/", component: HelloWorld },
+  {
+    path: "/",
+    component: UserLayout,
+    children: [
+      { path: "", component: HelloWorld },
+      { path: "my-project", component: ProjectsPage, beforeEnter: beforeEnter },
+      {
+        path: "my-project/:id",
+        component: ProjectPage,
+        children: [
+          { path: "", component: ProjectBoard },
+          { path: "backlog", component: ProjectBacklog },
+          { path: "goal", component: ProjectGoal },
+          { path: "review", component: ProjectReview },
+          { path: "retrospective", component: ProjectRetrospective },
+        ],
+      },
+      { path: "/my-project/settings/:id", component: ProjectDetailPage, beforeEnter: beforeEnter },
+      { path: "/my-profile", component: UserProfilePage, beforeEnter: beforeEnter },
+    ]
+  },
+
   { path: "/login", component: LoginPage },
   { path: "/register", component: RegisterPage },
-  { path: "/my-project", component: ProjectsPage, beforeEnter: beforeEnter },
-  {
-    path: "/my-project/:id",
-    component: ProjectPage,
-    children: [
-      { path: "", component: ProjectBoard },
-      { path: "backlog", component: ProjectBacklog },
-      { path: "goal", component: ProjectGoal },
-      { path: "review", component: ProjectReview },
-      { path: "retrospective", component: ProjectRetrospective },
-    ],
-    beforeEnter: beforeEnter
-  },
-  { path: "/my-project/settings/:id", component: ProjectDetailPage, beforeEnter: beforeEnter },
-  { path: "/my-profile", component: UserProfilePage, beforeEnter: beforeEnter },
+
   {
     path: "/admin",
-    component: AdminPage,
+    component: AdminLayout,
     children: [
       { path: "", component: AdminUserManagement }
-    ], beforeEnter: beforeEnter
+    ], beforeEnter: beforeEnterAdmin
   }
 ]
 
