@@ -36,7 +36,7 @@
 
         <v-divider></v-divider>
 
-        <v-list-item class="sidebar-sprint-subitem" @click="goToProjectDetail">
+        <v-list-item class="sidebar-sprint-subitem" @click="signOut">
           <v-list-item-icon>
             <v-icon small>fas fa-sign-out</v-icon>
           </v-list-item-icon>
@@ -54,6 +54,10 @@
 import { mapGetters, mapActions } from "vuex";
 import SIDEBAR_GETTERS from "@/store/modules/sidebar/sidebar-getters.js";
 import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
+import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
+import axios from "axios";
+import { AUTH_API } from "@/factories/auth";
+import { CookieService } from "@/services/CookieService";
 
 export default {
   name: "admin-side-bar",
@@ -76,7 +80,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({ changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex }),
+    ...mapActions({
+      changeTabIndex: SIDEBAR_ACTIONS.changeTabIndex,
+      logout: AUTHENTICATION_ACTIONS.logout,
+    }),
 
     toggleSidebar() {
       this.isShowSidebar = !this.isShowSidebar;
@@ -90,6 +97,23 @@ export default {
 
     goToUserMangement() {
       this.$router.push({ path: `/my-project//backlog` }).catch(() => {});
+    },
+
+    signOut() {
+      axios
+        .post(AUTH_API.logoutApi, null, { headers: CookieService.authHeader() })
+        .then((res) => {
+          if (res) {
+            this.logout();
+          }
+        })
+        .catch((err) => {
+          if (err) {
+            this.logout();
+          }
+        });
+
+      this.$router.push("/login");
     },
   },
 };

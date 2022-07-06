@@ -1,8 +1,8 @@
 <template>
   <div class="project-page">
-    <v-card elevation="0">
+    <v-card elevation="0" class="project-page-card" color="#f6f7fb">
       <v-card-title class="project-page-title">
-        <div class="project-title">Project</div>
+        <div class="project-title">Projects</div>
 
         <v-spacer></v-spacer>
 
@@ -152,6 +152,12 @@ export default {
   padding: 30px 30px 100px 30px;
   margin-bottom: 50px;
   overflow-x: hidden;
+}
+
+.project-page-card {
+  padding: 15px 15px !important;
+  border-radius: 5px;
+  height: 100%;
 }
 
 .project-page-title {

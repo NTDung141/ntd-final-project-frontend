@@ -1,6 +1,6 @@
 <template>
   <div class="admin-user-management-page">
-    <v-card elevation="0">
+    <v-card elevation="0" class="use-management-card" color="#f6f7fb">
       <v-card-title>
         <div class="user-management-table-title">Users</div>
       </v-card-title>
@@ -104,5 +104,11 @@ export default {
 
 .user-search-input {
   width: 25%;
+}
+
+.use-management-card {
+  padding: 15px 15px !important;
+  border-radius: 5px;
+  height: 100%;
 }
 </style>

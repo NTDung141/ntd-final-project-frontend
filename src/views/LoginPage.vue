@@ -125,7 +125,11 @@ export default {
               Cookies.set("accessToken", res.data.access_token);
               Cookies.set("userInfo", JSON.stringify(res.data.user));
               this.login(res.data.user);
-              this.$router.push("/my-project");
+              if (res.data.user.is_admin == 1) {
+                this.$router.push("/admin");
+              } else {
+                this.$router.push("/my-project");
+              }
             }
           })
           .catch((err) => {
