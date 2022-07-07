@@ -46,7 +46,6 @@ export default {
   },
 
   beforeMount() {
-    console.log(this.projectId);
     const accessToken = Cookies.get("accessToken");
     const headers = {
       Authorization: `Bearer ${accessToken}`,
@@ -57,7 +56,6 @@ export default {
         headers: headers,
       })
       .then((res) => {
-        console.log(res);
         if (res.data && res.data.project) {
           this.project = res.data.project;
         }

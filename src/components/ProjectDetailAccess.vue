@@ -94,6 +94,7 @@
             v-model="showRemovePersonDialog"
             :project="project"
             :user="item"
+            @update-project="updateProject"
           />
         </template>
       </v-data-table>
@@ -230,6 +231,10 @@ export default {
 
     deleteItem() {
       this.showRemovePersonDialog = true;
+    },
+
+    updateProject(project) {
+      this.$emit("update-project", project);
     },
   },
 

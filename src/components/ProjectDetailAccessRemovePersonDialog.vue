@@ -65,12 +65,13 @@ export default {
       formData.append("project_id", this.project.id);
       formData.append("user_id", this.user.id);
       axios
-        .post(PROJECT_API.removePeopleApi, {
+        .post(PROJECT_API.removePeopleApi, formData, {
           headers: CookieService.authHeader(),
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            this.updateProject(res.data.project);
+            // this.updateProject(res.data.project);
+            this.$emit("update-project", res.data.project);
           }
         })
         .catch((err) => {
