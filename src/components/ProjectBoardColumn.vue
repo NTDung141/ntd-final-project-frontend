@@ -1,5 +1,9 @@
 <template>
-  <v-card class="mr-6" elevation="0" color="grey lighten-4">
+  <v-card
+    class="project-board-column mr-6"
+    elevation="0"
+    color="grey lighten-4"
+  >
     <v-card-title>
       <div class="column-title">{{ columnName }}</div>
     </v-card-title>
@@ -75,6 +79,10 @@ export default {
 </script>
 
 <style scoped>
+.project-board-column {
+  height: 95%;
+}
+
 .column-title {
   font-size: 12px;
   font-weight: 500;

@@ -104,26 +104,26 @@
 <script>
 import axios from "axios";
 import Cookies from "js-cookie";
-import { mapGetters } from "vuex";
-import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+// import { mapGetters } from "vuex";
+// import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 import ProjectDetailAccessRemovePersonDialog from "@/components/ProjectDetailAccessRemovePersonDialog.vue";
 
 export default {
   name: "project-detail-access",
 
-  // props: {
-  //   project: Object,
-  // },
+  props: {
+    project: Object,
+  },
 
   components: {
     ProjectDetailAccessRemovePersonDialog,
   },
 
-  computed: {
-    ...mapGetters({
-      project: PROJECT_GETTERS.project,
-    }),
-  },
+  // computed: {
+  //   ...mapGetters({
+  //     project: PROJECT_GETTERS.project,
+  //   }),
+  // },
 
   data() {
     return {

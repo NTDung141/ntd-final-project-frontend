@@ -56,6 +56,7 @@ const routes = [
           { path: "review", component: ProjectReview },
           { path: "retrospective", component: ProjectRetrospective },
         ],
+        beforeEnter: beforeEnter
       },
       { path: "/my-project/settings/:id", component: ProjectDetailPage, beforeEnter: beforeEnter },
       { path: "/my-profile", component: UserProfilePage, beforeEnter: beforeEnter },
