@@ -85,7 +85,8 @@
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { PROJECT_API } from "@/factories/project.js";
+import { CookieService } from "@/services/CookieService.js";
 
 export default {
   name: "project-create",
@@ -166,15 +167,9 @@ export default {
         this.projectName = "";
         this.projectKey = "";
 
-        const accessToken = Cookies.get("accessToken");
-        console.log("token", accessToken);
-        const headers = {
-          Authorization: `Bearer ${accessToken}`,
-        };
-
         axios
-          .post("http://127.0.0.1:8000/api/project/create", data, {
-            headers: headers,
+          .post(PROJECT_API.createApi, data, {
+            headers: CookieService.authHeader(),
           })
           .then((res) => {
             console.log(res);
@@ -184,6 +179,8 @@ export default {
           });
 
         this.show = false;
+
+        this.$emit("fetch-project-list");
       }
     },
 

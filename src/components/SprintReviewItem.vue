@@ -35,7 +35,7 @@
       ></div>
 
       <v-card-text v-if="isEditting">
-        <vue-editor v-model="content"></vue-editor>
+        <vue-editor class="sprint-review-editor" v-model="content"></vue-editor>
         <v-card-actions>
           <v-btn color="primary" small @click="changeReview">Save</v-btn>
           <v-btn small @click="cancelChangeReview">Cancel</v-btn>
@@ -190,5 +190,9 @@ export default {
 
 .completed-icon {
   color: #1976d2;
+}
+
+.sprint-review-editor {
+  background-color: #fff;
 }
 </style>

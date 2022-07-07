@@ -16,6 +16,7 @@
           />
           <TaskActivity
             :task="task"
+            :commentList="commentList"
             :showTaskDetailDialog="showTaskDetailDialog"
           />
         </v-col>
@@ -36,8 +37,13 @@
 import TaskDescription from "@/components/TaskDescription.vue";
 import TaskDetail from "@/components/TaskDetail.vue";
 import TaskActivity from "@/components/TaskActivity.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+import axios from "axios";
+import { CookieService } from "@/services/CookieService.js";
+import { TASK_API } from "@/factories/task.js";
+import REALTIMECOMMENT_ACTIONS from "@/store/modules/realtimeComment/realtimeComment-actions";
+import REALTIMECOMMENT_GETTERS from "@/store/modules/realtimeComment/realtimeComment-getters";
 
 export default {
   name: "project-task-detail",
@@ -56,6 +62,7 @@ export default {
   computed: {
     ...mapGetters({
       project: PROJECT_GETTERS.project,
+      commentList: REALTIMECOMMENT_GETTERS.commentList,
     }),
 
     showTaskDetailDialog: {
@@ -76,6 +83,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      replaceCommentList: REALTIMECOMMENT_ACTIONS.replaceCommentList,
+    }),
+
     closeDialog() {
       this.isEditting = false;
       this.showTaskDetailDialog = false;
@@ -83,6 +94,30 @@ export default {
 
     saveTaskChange() {
       console.log(this.content);
+    },
+
+    fetchTaskInfo() {
+      axios
+        .get(TASK_API.getByIdApi(this.task.id), {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.task) {
+            this.replaceCommentList(res.data.task.comments);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+
+  watch: {
+    showTaskDetailDialog() {
+      this.replaceCommentList([]);
+      if (this.showTaskDetailDialog) {
+        this.fetchTaskInfo();
+      }
     },
   },
 };
