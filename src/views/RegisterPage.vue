@@ -1,7 +1,7 @@
 <template>
   <div class="register-page">
-    <form>
-      <v-card class="register-form" elevation="5">
+    <div class="register-form">
+      <form>
         <v-card-title class="register-form-title">Sign up</v-card-title>
 
         <v-text-field
@@ -69,8 +69,8 @@
         >
           Sign up
         </v-btn>
-      </v-card>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -220,12 +220,14 @@ export default {
 
 .register-form {
   margin: auto;
-  margin-top: 60px;
+  margin-top: 10%;
   padding: 20px 20px;
   min-width: 300px !important;
   min-height: 300px !important;
   max-width: 400px !important;
   max-height: 600px !important;
+  border: solid 1px gray;
+  border-radius: 7px;
 }
 
 .register-form-title {

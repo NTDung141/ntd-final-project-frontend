@@ -88,7 +88,13 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon x-small @click="deleteItem(item)"> fas fa-trash </v-icon>
+          <v-icon x-small @click="deleteItem"> fas fa-trash </v-icon>
+
+          <ProjectDetailAccessRemovePersonDialog
+            v-model="showRemovePersonDialog"
+            :project="project"
+            :user="item"
+          />
         </template>
       </v-data-table>
     </v-card>
@@ -98,6 +104,9 @@
 <script>
 import axios from "axios";
 import Cookies from "js-cookie";
+// import { mapGetters } from "vuex";
+// import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+import ProjectDetailAccessRemovePersonDialog from "@/components/ProjectDetailAccessRemovePersonDialog.vue";
 
 export default {
   name: "project-detail-access",
@@ -105,6 +114,16 @@ export default {
   props: {
     project: Object,
   },
+
+  components: {
+    ProjectDetailAccessRemovePersonDialog,
+  },
+
+  // computed: {
+  //   ...mapGetters({
+  //     project: PROJECT_GETTERS.project,
+  //   }),
+  // },
 
   data() {
     return {
@@ -128,39 +147,9 @@ export default {
           width: "10%",
         },
       ],
-      people: [
-        {
-          name: "Sandra Adams",
-          group: "Group 1",
-          avatar: "@/assets/defaultAvatar2.jpg",
-        },
-        {
-          name: "Ali Connors",
-          group: "Group 1",
-          avatar: "@/assets/defaultAvatar2.jpg",
-        },
-        {
-          name: "Trevor Hansen",
-          group: "Group 1",
-          avatar: "@/assets/defaultAvatar2.jpg",
-        },
-        {
-          name: "Tucker Smith",
-          group: "Group 1",
-          avatar: "@/assets/defaultAvatar2.jpg",
-        },
-        {
-          name: "Britta Holt",
-          group: "Group 2",
-          avatar: "@/assets/defaultAvatar2.jpg",
-        },
-        {
-          name: "Jane Smith ",
-          group: "Group 2",
-          avatar: "@/assets/defaultAvatar2.jpg",
-        },
-      ],
+      people: [],
       friends: [],
+      showRemovePersonDialog: false,
     };
   },
 
@@ -237,6 +226,10 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+
+    deleteItem() {
+      this.showRemovePersonDialog = true;
     },
   },
 

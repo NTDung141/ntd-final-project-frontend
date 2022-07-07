@@ -8,9 +8,12 @@ export const registerApi = BASE_URL + "/auth/register"
 
 export const getUserProfileApi = BASE_URL + "/auth/user-profile"
 
+export const getAllUserApi = BASE_URL + "/auth/get-all"
+
 export const AUTH_API = {
     loginApi,
     logoutApi,
     registerApi,
-    getUserProfileApi
+    getUserProfileApi,
+    getAllUserApi
 }

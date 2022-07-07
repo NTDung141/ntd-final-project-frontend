@@ -1,95 +1,18 @@
 <template>
-  <div class="hello">
-    <div class="hello-content">
-      <h1>{{ msg }}</h1>
-      <p>
-        For a guide and recipes on how to configure / customize this project,<br />
-        check out the
-        <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-          >vue-cli documentation</a
-        >.
-      </p>
-      <h3>Installed CLI Plugins</h3>
-      <ul>
-        <li>
-          <a
-            href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-            target="_blank"
-            rel="noopener"
-            >babel</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-            target="_blank"
-            rel="noopener"
-            >eslint</a
-          >
-        </li>
-      </ul>
-      <h3>Essential Links</h3>
-      <ul>
-        <li>
-          <a href="https://vuejs.org" target="_blank" rel="noopener"
-            >Core Docs</a
-          >
-        </li>
-        <li>
-          <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-            >Forum</a
-          >
-        </li>
-        <li>
-          <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-            >Community Chat</a
-          >
-        </li>
-        <li>
-          <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-            >Twitter</a
-          >
-        </li>
-        <li>
-          <a href="https://news.vuejs.org" target="_blank" rel="noopener"
-            >News</a
-          >
-        </li>
-      </ul>
-      <h3>Ecosystem</h3>
-      <ul>
-        <li>
-          <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-            >vue-router</a
-          >
-        </li>
-        <li>
-          <a href="https://vuex.vuejs.org" target="_blank" rel="noopener"
-            >vuex</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://github.com/vuejs/vue-devtools#vue-devtools"
-            target="_blank"
-            rel="noopener"
-            >vue-devtools</a
-          >
-        </li>
-        <li>
-          <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-            >vue-loader</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://github.com/vuejs/awesome-vue"
-            target="_blank"
-            rel="noopener"
-            >awesome-vue</a
-          >
-        </li>
-      </ul>
+  <div class="home-page">
+    <div class="home-page-left">
+      <div class="home-page-content">
+        <div class="home-page-content-block">
+          <div class="content-title">The development tool</div>
+          <div class="content-title">used by agile teams</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-page-right">
+      <div class="home-page-img-border">
+        <div class="home-page-img" :style="cssIamgeDiv"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -97,13 +20,20 @@
 <script>
 export default {
   name: "HelloWorld",
-  props: {
-    msg: String,
+  data() {
+    return {
+      image: "@/assets/sprint-cycle.png",
+      cssIamgeDiv: {
+        backgroundImage: `url(${require("@/assets/sprint-cycle.png")})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "contain",
+      },
+    };
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
@@ -120,14 +50,60 @@ a {
   color: #42b983;
 }
 
-.hello {
+.home-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  width: 100%;
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 0.8743872549019608) 3%,
+    rgba(9, 9, 121, 0.9192051820728291) 51%,
+    rgba(6, 189, 226, 0.8995973389355743) 100%
+  );
+}
+
+.home-page-left {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
 }
 
-.hello-content {
-  height: 100%;
+.home-page-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-page-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.home-page-content-block {
+  display: block;
+}
+
+.home-page-img {
+  height: 90%;
+  width: 90%;
+}
+
+.home-page-img-border {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  height: 55%;
+  width: 65%;
+  border-radius: 10px;
+}
+
+.content-title {
+  font-size: 55px;
+  font-weight: 500;
 }
 </style>

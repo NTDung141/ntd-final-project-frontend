@@ -1,7 +1,5 @@
 <template>
   <v-app id="app">
-    <TheHeader />
-
     <div class="wrapper">
       <router-view />
     </div>
@@ -9,20 +7,46 @@
 </template>
 
 <script>
-import TheHeader from "./components/TheHeader.vue";
 import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authentication-actions";
+import REALTIMECOMMENT_ACTIONS from "@/store/modules/realtimeComment/realtimeComment-actions";
 import { mapActions } from "vuex";
 import Cookies from "js-cookie";
+import Pusher from "pusher-js";
+import { CookieService } from "@/services/CookieService.js";
 
 export default {
   name: "App",
 
-  components: {
-    TheHeader,
+  data() {
+    return {
+      myPusher: null,
+    };
   },
 
   methods: {
-    ...mapActions({ login: AUTHENTICATION_ACTIONS.login }),
+    ...mapActions({
+      login: AUTHENTICATION_ACTIONS.login,
+      changeCommentList: REALTIMECOMMENT_ACTIONS.changeCommentList,
+    }),
+
+    subscribe() {
+      let pusher = new Pusher("d273b3db1a7815a83560", {
+        cluster: "ap1",
+        authEndpoint: process.env.VUE_APP_BASE_URL + "/broadcasting/auth",
+        auth: {
+          headers: CookieService.authHeader(),
+        },
+      });
+      pusher.subscribe("private-channel-comment");
+      pusher.connection.bind("state_change", (states) => {
+        console.log(states);
+      });
+      pusher.bind("newComment", (data) => {
+        this.changeCommentList(data.data);
+      });
+
+      this.myPusher = pusher;
+    },
   },
 
   created() {
@@ -33,6 +57,12 @@ export default {
     } else {
       this.$router.push("/login");
     }
+
+    this.subscribe();
+  },
+
+  destroyed() {
+    this.myPusher.unsubscribe("private-channel-comment");
   },
 };
 </script>
@@ -53,6 +83,7 @@ export default {
 
 .wrapper {
   height: 100%;
+  z-index: 0;
 }
 
 .project-link {

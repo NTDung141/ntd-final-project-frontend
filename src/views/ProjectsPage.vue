@@ -1,8 +1,8 @@
 <template>
   <div class="project-page">
-    <v-card elevation="0">
+    <v-card elevation="0" class="project-page-card" color="#f6f7fb">
       <v-card-title class="project-page-title">
-        <div class="project-title">Project</div>
+        <div class="project-title">Projects</div>
 
         <v-spacer></v-spacer>
 
@@ -13,6 +13,7 @@
         <ProjectCreate
           :visible="showProjectCreate"
           @close="showProjectCreate = false"
+          @fetch-project-list="fetchProjectList"
         />
       </v-card-title>
 
@@ -66,7 +67,8 @@
 <script>
 import ProjectCreate from "@/components/ProjectCreate.vue";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { PROJECT_API } from "@/factories/project.js";
+import { CookieService } from "@/services/CookieService.js";
 
 export default {
   name: "projects-page",
@@ -102,29 +104,42 @@ export default {
   },
 
   mounted() {
-    const accessToken = Cookies.get("accessToken");
-    console.log("token", accessToken);
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    axios
-      .get("http://127.0.0.1:8000/api/project/get-all", {
-        headers: headers,
-      })
-      .then((res) => {
-        if (res.data && res.data.projects) {
-          this.projects = res.data.projects;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    this.fetchProjectList();
   },
 
   methods: {
     editItem(item) {
       this.$router.push(`/my-project/settings/${item.id}`);
+    },
+
+    deleteItem(item) {
+      axios
+        .delete(PROJECT_API.deleteApi(item.id), {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.projects) {
+            this.projects = res.data.projects;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    fetchProjectList() {
+      axios
+        .get(PROJECT_API.getAllApi, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.projects) {
+            this.projects = res.data.projects;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
@@ -137,6 +152,12 @@ export default {
   padding: 30px 30px 100px 30px;
   margin-bottom: 50px;
   overflow-x: hidden;
+}
+
+.project-page-card {
+  padding: 15px 15px !important;
+  border-radius: 5px;
+  height: 100%;
 }
 
 .project-page-title {
