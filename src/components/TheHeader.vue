@@ -24,7 +24,13 @@
 
       <div class="my-toolbar-action" v-if="userInfo.email">
         <div class="mr-5">
-          <i class="far fa-bell fa-lg"></i>
+          <v-menu offset-y left>
+            <template v-slot:activator="{ on, attrs }">
+              <i class="far fa-bell fa-lg" v-bind="attrs" v-on="on"></i>
+            </template>
+
+            <NotificationList />
+          </v-menu>
         </div>
 
         <div class="text-center">
@@ -58,9 +64,14 @@ import { mapActions } from "vuex";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_API } from "@/factories/auth";
+import NotificationList from "@/components/NotificationList.vue";
 
 export default {
   name: "the-header",
+
+  components: {
+    NotificationList,
+  },
 
   computed: {
     ...mapGetters({
