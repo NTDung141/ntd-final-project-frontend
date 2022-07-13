@@ -16,7 +16,13 @@
         outlined
       >
         <template slot="append-outer">
-          <v-btn small class="mr-1" @click="changeName">
+          <v-btn
+            small
+            color="primary"
+            class="mr-1"
+            @click="changeName"
+            :disabled="!taskName"
+          >
             <i class="fas fa-check"></i>
           </v-btn>
 

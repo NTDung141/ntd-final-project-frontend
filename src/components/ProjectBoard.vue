@@ -13,7 +13,7 @@
         {{ activeSprint ? activeSprint.name : project.key + " board" }}
       </div>
       <v-spacer></v-spacer>
-      <v-btn depressed small color="primary">Complete Sprint</v-btn>
+      <!-- <v-btn depressed small color="primary">Complete Sprint</v-btn> -->
     </div>
 
     <div class="project-board-header">
