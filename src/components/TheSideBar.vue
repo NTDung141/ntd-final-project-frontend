@@ -147,6 +147,7 @@ export default {
 .sidebar {
   text-align: left;
   margin-top: 7px;
+  background-color: #fafbfc;
 }
 
 .sidebar-sprint {

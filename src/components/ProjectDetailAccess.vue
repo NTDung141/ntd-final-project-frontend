@@ -83,7 +83,7 @@
 
       <v-data-table :headers="headers" :items="project.users" :search="search">
         <template v-slot:[`item.role`]="{ item }">
-          <div v-if="item.pivot.role === 1">Lead</div>
+          <div v-if="item.pivot.role === 1">Administrator</div>
           <div v-else>Member</div>
         </template>
 
