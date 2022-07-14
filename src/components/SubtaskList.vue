@@ -11,6 +11,7 @@
         v-for="subtask in subtaskList"
         :key="subtask.id"
         :subtask="subtask"
+        @delete-subtask="deleteSubtask"
       />
 
       <v-text-field
@@ -53,6 +54,13 @@
 
 <script>
 import SubtaskItem from "@/components/SubtaskItem.vue";
+import axios from "axios";
+import { CookieService } from "@/services/CookieService.js";
+import { SUBTASK_API } from "@/factories/subtask.js";
+// import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
+// import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+// import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "subtask-list",
 
@@ -60,16 +68,12 @@ export default {
     SubtaskItem,
   },
 
+  props: {
+    task: Object,
+  },
+
   data() {
     return {
-      // subtaskList: [
-      //   { id: 1, name: "Subtask", status: 1 },
-      //   { id: 2, name: "Subtask", status: 1 },
-      //   { id: 3, name: "Subtask", status: 1 },
-      //   { id: 4, name: "Subtask", status: 1 },
-      //   { id: 5, name: "Subtask", status: 1 },
-      // ],
-
       subtaskList: [],
 
       newSubtaskName: "",
@@ -77,9 +81,40 @@ export default {
     };
   },
 
+  mounted() {
+    this.subtaskList = this.task.subtasks;
+  },
+
+  // computed: {
+  //   ...mapGetters({
+  //     project: PROJECT_GETTERS.project,
+  //   }),
+  // },
+
   methods: {
+    // ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+
     createNewSubtask() {
       if (this.newSubtaskName) {
+        let formData = new FormData();
+        formData.append("task_id", this.task.id);
+        formData.append("name", this.newSubtaskName);
+        // formData.append("project_id", this.project.id);
+
+        axios
+          .post(SUBTASK_API.createApi, formData, {
+            headers: CookieService.authHeader(),
+          })
+          .then((res) => {
+            if (res.data && res.data.new_subtask) {
+              this.subtaskList.push(res.data.new_subtask);
+              console.log(res.data.new_subtask);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
         this.isCreating = false;
       } else {
         this.isCreating = true;
@@ -89,6 +124,10 @@ export default {
     cancelCreateNewSubtask() {
       this.isCreating = false;
       this.newSubtaskName = "";
+    },
+
+    deleteSubtask(subtask) {
+      console.log(subtask);
     },
   },
 };

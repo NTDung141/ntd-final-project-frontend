@@ -39,9 +39,7 @@
           </div>
         </template>
         <div class="subtask-menu-box">
-          <v-btn class="subtask-menu-item" @click="editSubtask" depressed small>
-            Edit
-          </v-btn>
+          <v-btn class="subtask-menu-item" depressed small> Edit </v-btn>
 
           <v-btn
             class="subtask-menu-item"
@@ -67,9 +65,6 @@ export default {
 
   data() {
     return {
-      subtaskName: "",
-      subtaskStatus: 0,
-
       statuses: [
         { id: 1, name: "Opened", style: "status-1" },
         { id: 2, name: "In Progress", style: "status-2" },
@@ -90,6 +85,12 @@ export default {
 
       return returnValue;
     },
+
+    deleteSubtask() {
+      this.$emit("delete-subtask", this.subtask);
+    },
+
+    changeStatus() {},
   },
 };
 </script>
