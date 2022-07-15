@@ -4,6 +4,7 @@ import AUTHENTICATION_STORE from "./modules/authentication/authentication-store.
 import PROJECT_STORE from "./modules/project/project-store.js"
 import SIDEBAR_STORE from "./modules/sidebar/sidebar-store.js"
 import REALTIMECOMMENT_STORE from "./modules/realtimeComment/realtimeComment-store.js"
+import SUBTASK_STORE from "./modules/subtask/subtask-store.js"
 
 Vue.use(Vuex)
 
@@ -12,6 +13,7 @@ export const store = new Vuex.Store({
         AUTHENTICATION_STORE,
         PROJECT_STORE,
         SIDEBAR_STORE,
-        REALTIMECOMMENT_STORE
+        REALTIMECOMMENT_STORE,
+        SUBTASK_STORE
     }
 })

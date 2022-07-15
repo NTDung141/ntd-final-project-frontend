@@ -57,9 +57,9 @@ import SubtaskItem from "@/components/SubtaskItem.vue";
 import axios from "axios";
 import { CookieService } from "@/services/CookieService.js";
 import { SUBTASK_API } from "@/factories/subtask.js";
-// import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
-// import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
-// import { mapActions, mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+import SUBTASK_ACTIONS from "@/store/modules/subtask/subtask-actions";
+import SUBTASK_GETTERS from "@/store/modules/subtask/subtask-getters";
 
 export default {
   name: "subtask-list",
@@ -72,34 +72,29 @@ export default {
     task: Object,
   },
 
+  computed: {
+    ...mapGetters({
+      subtaskList: SUBTASK_GETTERS.subtaskList,
+    }),
+  },
+
   data() {
     return {
-      subtaskList: [],
-
       newSubtaskName: "",
       isCreating: false,
     };
   },
 
-  mounted() {
-    this.subtaskList = this.task.subtasks;
-  },
-
-  // computed: {
-  //   ...mapGetters({
-  //     project: PROJECT_GETTERS.project,
-  //   }),
-  // },
-
   methods: {
-    // ...mapActions({ updateProject: PROJECT_ACTIONS.updateProject }),
+    ...mapActions({
+      changeSubtaskList: SUBTASK_ACTIONS.changeSubtaskList,
+    }),
 
     createNewSubtask() {
       if (this.newSubtaskName) {
         let formData = new FormData();
         formData.append("task_id", this.task.id);
         formData.append("name", this.newSubtaskName);
-        // formData.append("project_id", this.project.id);
 
         axios
           .post(SUBTASK_API.createApi, formData, {
@@ -107,8 +102,9 @@ export default {
           })
           .then((res) => {
             if (res.data && res.data.new_subtask) {
-              this.subtaskList.push(res.data.new_subtask);
-              console.log(res.data.new_subtask);
+              var tempSubtaskList = [...this.subtaskList];
+              tempSubtaskList.push(res.data.new_subtask);
+              this.changeSubtaskList(tempSubtaskList);
             }
           })
           .catch((err) => {
@@ -116,6 +112,7 @@ export default {
           });
 
         this.isCreating = false;
+        this.newSubtaskName = "";
       } else {
         this.isCreating = true;
       }
@@ -127,7 +124,35 @@ export default {
     },
 
     deleteSubtask(subtask) {
-      console.log(subtask);
+      axios
+        .delete(SUBTASK_API.deleteApi(subtask.id), {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.deleted_subtask_id) {
+            var newSubtaskList = this.removeItemInSubtaskList(
+              res.data.deleted_subtask_id
+            );
+            this.changeSubtaskList(newSubtaskList);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    removeItemInSubtaskList(id) {
+      var itemIndex = -1;
+      var tempSubtaskList = [...this.subtaskList];
+      this.subtaskList.forEach((subtask, index) => {
+        if (subtask.id == id) {
+          itemIndex = index;
+        }
+      });
+      if (itemIndex > -1) {
+        tempSubtaskList.splice(itemIndex, 1);
+      }
+      return tempSubtaskList;
     },
   },
 };
