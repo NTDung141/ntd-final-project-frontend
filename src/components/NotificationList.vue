@@ -6,6 +6,7 @@
         v-for="notification in notificationList"
         :key="notification.id"
         :notification="notification"
+        :projectKey="project.key"
       />
     </v-list>
 
@@ -20,6 +21,9 @@
 
 <script>
 import NotificationItem from "@/components/NotificationItem.vue";
+import { mapGetters } from "vuex";
+import NOTIFICATION_GETTERS from "@/store/modules/notification/notification-getters";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 export default {
   name: "notification-list",
 
@@ -27,15 +31,15 @@ export default {
     NotificationItem,
   },
 
+  computed: {
+    ...mapGetters({
+      notificationList: NOTIFICATION_GETTERS.notificationList,
+      project: PROJECT_GETTERS.project,
+    }),
+  },
+
   data() {
-    return {
-      notificationList: [
-        { id: 1, content: "notification" },
-        { id: 2, content: "notification" },
-        { id: 3, content: "notification" },
-        { id: 4, content: "notification" },
-      ],
-    };
+    return {};
   },
 };
 </script>
@@ -46,7 +50,7 @@ export default {
   display: block;
   min-width: 300px;
   max-width: 600px;
-  max-height: 600px;
+  max-height: 400px;
   padding: 10px 0px;
 }
 

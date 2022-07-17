@@ -2,12 +2,20 @@
   <v-list-item class="notification-item-card">
     <div class="notification-item">
       <div class="notification-item-avatar">
-        <v-avatar class="mr-5" size="30" v-bind="attrs" v-on="on">
+        <v-avatar class="mr-2" size="30" v-bind="attrs" v-on="on">
           <img src="@/assets/defaultAvatar2.jpg" />
         </v-avatar>
-      </div>
 
-      <div class="notification-item-content">{{ notification.content }}</div>
+        <div class="notification-maker-name mr-2">
+          {{ notification.user.name }}
+        </div>
+
+        <div class="notification-item-content">
+          {{ notification.content }} of {{ projectKey }}-{{
+            notification.task.key
+          }}
+        </div>
+      </div>
 
       <div class="notification-item-time">{{ notification.created_at }}</div>
     </div>
@@ -20,6 +28,7 @@ export default {
 
   props: {
     notification: Object,
+    projectKey: String,
   },
 };
 </script>
@@ -37,7 +46,7 @@ export default {
 
 .notification-item {
   display: grid;
-  grid-template-columns: 2fr 7fr 3fr;
+  grid-template-columns: 10fr 2fr;
   min-height: 50px;
   padding: 5px 10px;
 }
@@ -58,5 +67,9 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+
+.notification-maker-name {
+  font-weight: 500;
 }
 </style>
