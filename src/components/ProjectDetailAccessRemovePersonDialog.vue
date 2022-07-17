@@ -8,8 +8,8 @@
 
       <v-card-text>
         <div class="delete-dialog-content">
-          Are you sure you want to remove
-          <div class="delete-dialog-user-name">
+          Remove
+          <div class="delete-dialog-user-name mr-1">
             {{ user.name }}
           </div>
           from the project?
@@ -70,7 +70,7 @@ export default {
         })
         .then((res) => {
           if (res.data && res.data.project) {
-            // this.updateProject(res.data.project);
+            this.updateProject(res.data.project);
             this.$emit("update-project", res.data.project);
           }
         })
