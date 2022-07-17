@@ -14,20 +14,27 @@
       </router-link>
     </div>
 
-    <ProjectDetail :project="project" @change-name-and-key="changeNameAndKey" />
+    <ProjectDetail
+      :project="project"
+      @change-name-and-key="changeNameAndKey"
+      :role="roleInProject"
+    />
 
-    <ProjectDetailAccess :project="project" @update-project="updateProject" />
-
-    <!-- <ProjectDetailSprint /> -->
+    <ProjectDetailAccess
+      :project="project"
+      @update-project="updateProject"
+      :role="roleInProject"
+    />
   </div>
 </template>
 
 <script>
 import ProjectDetail from "@/components/ProjectDetail.vue";
 import ProjectDetailAccess from "@/components/ProjectDetailAccess.vue";
-// import ProjectDetailSprint from "@/components/ProjectDetailSprint.vue";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { mapGetters } from "vuex";
+import AUTHENTICATION_GETTERS from "@/store/modules/authentication/authentication-getters";
 
 export default {
   name: "project-detail-page",
@@ -36,13 +43,19 @@ export default {
     return {
       projectId: this.$route.params.id,
       project: {},
+      roleInProject: 0,
     };
   },
 
   components: {
     ProjectDetail,
     ProjectDetailAccess,
-    // ProjectDetailSprint,
+  },
+
+  computed: {
+    ...mapGetters({
+      userInfo: AUTHENTICATION_GETTERS.userInfo,
+    }),
   },
 
   beforeMount() {
@@ -58,6 +71,7 @@ export default {
       .then((res) => {
         if (res.data && res.data.project) {
           this.project = res.data.project;
+          this.checkRoleInProject(res.data.project);
         }
       })
       .catch((err) => {
@@ -74,6 +88,14 @@ export default {
 
     updateProject(project) {
       this.project = project;
+    },
+
+    checkRoleInProject(project) {
+      project.users.forEach((member) => {
+        if (member.id == this.userInfo.id) {
+          this.roleInProject = member.pivot.role;
+        }
+      });
     },
   },
 };

@@ -6,7 +6,13 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn small depressed color="primary" @click="openDialog">
+        <v-btn
+          small
+          depressed
+          color="primary"
+          @click="openDialog"
+          :disabled="role == 2"
+        >
           Add people
         </v-btn>
 
@@ -88,7 +94,9 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon x-small @click="deleteItem"> fas fa-trash </v-icon>
+          <v-icon v-if="role == 1" x-small @click="deleteItem">
+            fas fa-trash
+          </v-icon>
 
           <ProjectDetailAccessRemovePersonDialog
             v-model="showRemovePersonDialog"
@@ -108,12 +116,14 @@ import Cookies from "js-cookie";
 // import { mapGetters } from "vuex";
 // import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 import ProjectDetailAccessRemovePersonDialog from "@/components/ProjectDetailAccessRemovePersonDialog.vue";
+import { integer } from "vuelidate/lib/validators";
 
 export default {
   name: "project-detail-access",
 
   props: {
     project: Object,
+    role: integer,
   },
 
   components: {
