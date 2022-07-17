@@ -10,7 +10,7 @@
         <v-icon>far fa-building</v-icon>
       </v-list-item-avatar>
 
-      <v-list-item-title>Project Name</v-list-item-title>
+      <v-list-item-title>{{ project.name }}</v-list-item-title>
 
       <v-btn icon @click.stop="mini = !mini">
         <v-icon>fas fa-angle-left</v-icon>
@@ -56,6 +56,7 @@
 import { mapGetters, mapActions } from "vuex";
 import SIDEBAR_GETTERS from "@/store/modules/sidebar/sidebar-getters.js";
 import SIDEBAR_ACTIONS from "@/store/modules/sidebar/sidebar-actions.js";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 
 export default {
   name: "the-side-bar",
@@ -84,6 +85,7 @@ export default {
   computed: {
     ...mapGetters({
       currentTabIndex: SIDEBAR_GETTERS.currentTabIndex,
+      project: PROJECT_GETTERS.project,
     }),
   },
 
