@@ -16,6 +16,7 @@
               @change="isDisableSaveButton"
               dense
               outlined
+              :disabled="role == 2"
             ></v-text-field>
 
             <div class="project-detail-label">Key</div>
@@ -26,6 +27,7 @@
               @change="isDisableSaveButton"
               dense
               outlined
+              :disabled="role == 2"
             ></v-text-field>
 
             <div class="project-detail-label">
@@ -49,6 +51,7 @@
 <script>
 import axios from "axios";
 import Cookies from "js-cookie";
+import { integer } from "vuelidate/lib/validators";
 
 export default {
   name: "project-detail",
@@ -74,6 +77,7 @@ export default {
 
   props: {
     project: Object,
+    role: integer,
   },
 
   methods: {

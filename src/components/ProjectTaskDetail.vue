@@ -14,6 +14,9 @@
             :task="task"
             :showTaskDetailDialog="showTaskDetailDialog"
           />
+
+          <SubtaskList :task="task" />
+
           <TaskActivity
             :task="task"
             :commentList="commentList"
@@ -44,6 +47,8 @@ import { CookieService } from "@/services/CookieService.js";
 import { TASK_API } from "@/factories/task.js";
 import REALTIMECOMMENT_ACTIONS from "@/store/modules/realtimeComment/realtimeComment-actions";
 import REALTIMECOMMENT_GETTERS from "@/store/modules/realtimeComment/realtimeComment-getters";
+import SubtaskList from "@/components/SubtaskList.vue";
+import SUBTASK_ACTIONS from "@/store/modules/subtask/subtask-actions";
 
 export default {
   name: "project-task-detail",
@@ -52,6 +57,7 @@ export default {
     TaskDescription,
     TaskDetail,
     TaskActivity,
+    SubtaskList,
   },
 
   props: {
@@ -85,6 +91,7 @@ export default {
   methods: {
     ...mapActions({
       replaceCommentList: REALTIMECOMMENT_ACTIONS.replaceCommentList,
+      changeSubtaskList: SUBTASK_ACTIONS.changeSubtaskList,
     }),
 
     closeDialog() {
@@ -104,6 +111,7 @@ export default {
         .then((res) => {
           if (res.data && res.data.task) {
             this.replaceCommentList(res.data.task.comments);
+            this.changeSubtaskList(res.data.task.subtasks);
           }
         })
         .catch((err) => {

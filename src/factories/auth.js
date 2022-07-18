@@ -10,10 +10,16 @@ export const getUserProfileApi = BASE_URL + "/auth/user-profile"
 
 export const getAllUserApi = BASE_URL + "/auth/get-all"
 
+export const blockUserApi = BASE_URL + "/auth/block"
+
+export const unblockUserApi = BASE_URL + "/auth/unblock"
+
 export const AUTH_API = {
     loginApi,
     logoutApi,
     registerApi,
     getUserProfileApi,
-    getAllUserApi
+    getAllUserApi,
+    blockUserApi,
+    unblockUserApi
 }

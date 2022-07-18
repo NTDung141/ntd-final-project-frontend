@@ -13,6 +13,9 @@ import { mapActions } from "vuex";
 import Cookies from "js-cookie";
 import Pusher from "pusher-js";
 import { CookieService } from "@/services/CookieService.js";
+import { NOTIFICATION_API } from "@/factories/notification";
+import NOTIFICATION_ACTIONS from "@/store/modules/notification/notification-actions";
+import axios from "axios";
 
 export default {
   name: "App",
@@ -27,6 +30,8 @@ export default {
     ...mapActions({
       login: AUTHENTICATION_ACTIONS.login,
       changeCommentList: REALTIMECOMMENT_ACTIONS.changeCommentList,
+      replaceNotificationList: NOTIFICATION_ACTIONS.replaceNotificationList,
+      addNotification: NOTIFICATION_ACTIONS.addNotification,
     }),
 
     subscribe() {
@@ -38,14 +43,34 @@ export default {
         },
       });
       pusher.subscribe("private-channel-comment");
+      pusher.subscribe("private-channel-notification");
       pusher.connection.bind("state_change", (states) => {
         console.log(states);
       });
       pusher.bind("newComment", (data) => {
         this.changeCommentList(data.data);
       });
+      pusher.bind("newNotification", (data) => {
+        this.addNotification(data.data);
+        console.log(data);
+      });
 
       this.myPusher = pusher;
+    },
+
+    fetchNotificationList() {
+      axios
+        .get(NOTIFICATION_API.getByAuthApi, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.notification_list) {
+            this.replaceNotificationList(res.data.notification_list);
+          }
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
     },
   },
 
@@ -59,10 +84,13 @@ export default {
     }
 
     this.subscribe();
+
+    this.fetchNotificationList();
   },
 
   destroyed() {
     this.myPusher.unsubscribe("private-channel-comment");
+    this.myPusher.unsubscribe("private-channel-notification");
   },
 };
 </script>

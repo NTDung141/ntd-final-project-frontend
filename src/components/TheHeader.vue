@@ -24,7 +24,23 @@
 
       <div class="my-toolbar-action" v-if="userInfo.email">
         <div class="mr-5">
-          <i class="far fa-bell fa-lg"></i>
+          <v-menu offset-y left>
+            <template v-slot:activator="{ on, attrs }">
+              <v-badge
+                :color="numberOfNotification > 0 ? 'red' : 'white'"
+                :content="numberOfNotification"
+              >
+                <i
+                  class="far fa-bell fa-lg"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="seenNotification"
+                ></i>
+              </v-badge>
+            </template>
+
+            <NotificationList />
+          </v-menu>
         </div>
 
         <div class="text-center">
@@ -58,13 +74,21 @@ import { mapActions } from "vuex";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_API } from "@/factories/auth";
+import NotificationList from "@/components/NotificationList.vue";
+import NOTIFICATION_GETTERS from "@/store/modules/notification/notification-getters";
+import NOTIFICATION_ACTIONS from "@/store/modules/notification/notification-actions";
 
 export default {
   name: "the-header",
 
+  components: {
+    NotificationList,
+  },
+
   computed: {
     ...mapGetters({
       userInfo: AUTHENTICATION_GETTERS.userInfo,
+      numberOfNotification: NOTIFICATION_GETTERS.numberOfNotification,
     }),
   },
 
@@ -82,7 +106,11 @@ export default {
   },
 
   methods: {
-    ...mapActions({ logout: AUTHENTICATION_ACTIONS.logout }),
+    ...mapActions({
+      logout: AUTHENTICATION_ACTIONS.logout,
+      changeNumberOfNotification:
+        NOTIFICATION_ACTIONS.changeNumberOfNotification,
+    }),
 
     onLogout() {
       const accessToken = Cookies.get("accessToken");
@@ -114,6 +142,10 @@ export default {
 
     goToMyProfile() {
       this.$router.push("/my-profile");
+    },
+
+    seenNotification() {
+      this.changeNumberOfNotification(0);
     },
   },
 };

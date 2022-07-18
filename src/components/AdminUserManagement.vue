@@ -27,8 +27,18 @@
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-btn small color="error" v-if="item.is_blocked === 0">Block</v-btn>
-          <v-btn small color="primary" v-if="item.is_blocked === 1"
+          <v-btn
+            small
+            color="error"
+            v-if="item.is_blocked === 0"
+            @click="blockUser(item.id)"
+            >Block</v-btn
+          >
+          <v-btn
+            small
+            color="primary"
+            v-if="item.is_blocked === 1"
+            @click="unblockUser(item.id)"
             >Unblock</v-btn
           >
         </template>
@@ -77,12 +87,49 @@ export default {
       .then((res) => {
         if (res.data && res.data.users) {
           this.users = res.data.users;
-          console.log(res.data.users);
         }
       })
       .catch((err) => {
         console.log(err);
       });
+  },
+
+  methods: {
+    blockUser(userId) {
+      let formData = new FormData();
+      formData.append("id", userId);
+
+      axios
+        .post(AUTH_API.blockUserApi, formData, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.users) {
+            this.users = res.data.users;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    unblockUser(userId) {
+      let formData = new FormData();
+      formData.append("id", userId);
+
+      axios
+        .post(AUTH_API.unblockUserApi, formData, {
+          headers: CookieService.authHeader(),
+        })
+        .then((res) => {
+          if (res.data && res.data.users) {
+            this.users = res.data.users;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
 };
 </script>

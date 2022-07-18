@@ -58,6 +58,8 @@ import AUTHENTICATION_ACTIONS from "@/store/modules/authentication/authenticatio
 import Cookies from "js-cookie";
 import { validationMixin } from "vuelidate";
 import { required, maxLength, email } from "vuelidate/lib/validators";
+import { NOTIFICATION_API } from "@/factories/notification";
+import NOTIFICATION_ACTIONS from "@/store/modules/notification/notification-actions";
 
 export default {
   name: "login-page",
@@ -108,7 +110,10 @@ export default {
   },
 
   methods: {
-    ...mapActions({ login: AUTHENTICATION_ACTIONS.login }),
+    ...mapActions({
+      login: AUTHENTICATION_ACTIONS.login,
+      replaceNotificationList: NOTIFICATION_ACTIONS.replaceNotificationList,
+    }),
 
     submitLogin() {
       this.$v.$touch();
@@ -128,6 +133,7 @@ export default {
               if (res.data.user.is_admin == 1) {
                 this.$router.push("/admin");
               } else {
+                this.fetchNotificationList(res.data.access_token);
                 this.$router.push("/my-project");
               }
             }
@@ -143,6 +149,23 @@ export default {
     onLoading() {
       this.isLoading = true;
       this.loader = "loading";
+    },
+
+    fetchNotificationList(accessToken) {
+      axios
+        .get(NOTIFICATION_API.getByAuthApi, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => {
+          if (res.data && res.data.notification_list) {
+            this.replaceNotificationList(res.data.notification_list);
+          }
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+        });
     },
   },
 
