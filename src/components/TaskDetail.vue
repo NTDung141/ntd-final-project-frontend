@@ -298,7 +298,8 @@ export default {
     });
     this.assignees.unshift({ id: 0, name: "None" });
 
-    this.sprints = this.project.sprints;
+    this.sprints = [...this.project.sprints];
+    // this.sprints = this.project.sprints;
     this.sprints.unshift({ id: 0, name: "Backlog" });
 
     this.status = this.task.status;
@@ -385,7 +386,7 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.response.data);
         });
     },
 

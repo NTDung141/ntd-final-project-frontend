@@ -6,7 +6,13 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn small depressed color="primary" @click="openDialog">
+        <v-btn
+          small
+          depressed
+          color="primary"
+          @click="openDialog"
+          :disabled="role == 2"
+        >
           Add people
         </v-btn>
 
@@ -83,17 +89,20 @@
 
       <v-data-table :headers="headers" :items="project.users" :search="search">
         <template v-slot:[`item.role`]="{ item }">
-          <div v-if="item.pivot.role === 1">Lead</div>
+          <div v-if="item.pivot.role === 1">Administrator</div>
           <div v-else>Member</div>
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
-          <v-icon x-small @click="deleteItem"> fas fa-trash </v-icon>
+          <v-icon v-if="role == 1" x-small @click="deleteItem">
+            fas fa-trash
+          </v-icon>
 
           <ProjectDetailAccessRemovePersonDialog
             v-model="showRemovePersonDialog"
             :project="project"
             :user="item"
+            @update-project="updateProject"
           />
         </template>
       </v-data-table>
@@ -107,12 +116,14 @@ import Cookies from "js-cookie";
 // import { mapGetters } from "vuex";
 // import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 import ProjectDetailAccessRemovePersonDialog from "@/components/ProjectDetailAccessRemovePersonDialog.vue";
+import { integer } from "vuelidate/lib/validators";
 
 export default {
   name: "project-detail-access",
 
   props: {
     project: Object,
+    role: integer,
   },
 
   components: {
@@ -230,6 +241,10 @@ export default {
 
     deleteItem() {
       this.showRemovePersonDialog = true;
+    },
+
+    updateProject(project) {
+      this.$emit("update-project", project);
     },
   },
 
