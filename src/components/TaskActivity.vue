@@ -1,6 +1,6 @@
 <template>
   <v-card-text>
-    <div class="feature-label flex-start mb-3">Activities & Comments</div>
+    <div class="feature-label flex-start mb-3">Comments</div>
 
     <div class="task-comment-list" :ref="`list-${task.id}`">
       <div

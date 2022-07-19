@@ -1,6 +1,6 @@
 <template>
   <v-card-text>
-    <div class="feature-label flex-start mb-3">Subtask</div>
+    <div class="feature-label flex-start mb-3">Subtasks</div>
 
     <div class="subtask-list">
       <div class="empty-subtask" v-if="subtaskList && subtaskList.length < 1">
