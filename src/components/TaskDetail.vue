@@ -15,7 +15,7 @@
         <v-col cols="7">
           <v-card-text>
             <div
-              v-if="!isEditAssignee"
+              v-if="!isEditAssignee && roleInProject == 1"
               class="task-feature-value flex-start"
               @click="isEditAssignee = true"
             >
@@ -31,8 +31,24 @@
               }}
             </div>
 
+            <div
+              v-if="!isEditAssignee && roleInProject != 1"
+              class="task-feature-value flex-start"
+            >
+              <v-avatar
+                v-if="assignee && assignee.id !== 0"
+                size="20"
+                class="mr-3"
+              >
+                <img src="@/assets/defaultAvatar2.jpg" />
+              </v-avatar>
+              {{
+                assignee && assignee.id !== 0 ? computedAssignee.name : "None"
+              }}
+            </div>
+
             <v-autocomplete
-              v-if="isEditAssignee"
+              v-if="isEditAssignee && roleInProject == 1"
               v-model="assignee"
               :items="assignees"
               item-value="id"
@@ -77,7 +93,7 @@
         <v-col cols="7">
           <v-card-text>
             <div
-              v-if="!isEditSprint"
+              v-if="!isEditSprint && roleInProject == 1"
               class="task-feature-value"
               @click="isEditSprint = true"
             >
@@ -86,8 +102,17 @@
               </div>
             </div>
 
+            <div
+              v-if="!isEditSprint && roleInProject != 1"
+              class="task-feature-value"
+            >
+              <div class="flex-start">
+                {{ sprint ? computedSprint.name : "None" }}
+              </div>
+            </div>
+
             <v-autocomplete
-              v-if="isEditSprint"
+              v-if="isEditSprint && roleInProject == 1"
               v-model="sprint"
               :items="sprints"
               item-value="id"
@@ -245,6 +270,7 @@ import { CookieService } from "@/services/CookieService.js";
 import { TASK_API } from "@/factories/task.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 import { mapActions } from "vuex";
+import { integer } from "vuelidate/lib/validators";
 
 export default {
   name: "task-detail",
@@ -253,6 +279,7 @@ export default {
     task: Object,
     project: Object,
     showTaskDetailDialog: Boolean,
+    roleInProject: integer,
   },
 
   data() {

@@ -2,9 +2,16 @@
   <div>
     <v-card-text>
       <div
-        v-if="!isEditTaskName"
+        v-if="!isEditTaskName && roleInProject == 1"
         class="task-name task-feature-value flex-start mb-2"
         @click="isEditTaskName = true"
+      >
+        {{ task.name }}
+      </div>
+
+      <div
+        v-if="!isEditTaskName && roleInProject != 1"
+        class="task-name task-feature-value flex-start mb-2"
       >
         {{ task.name }}
       </div>
@@ -74,6 +81,7 @@ import { CookieService } from "@/services/CookieService.js";
 import { TASK_API } from "@/factories/task.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
 import { mapActions } from "vuex";
+import { integer } from "vuelidate/lib/validators";
 
 export default {
   name: "task-description",
@@ -81,6 +89,7 @@ export default {
   props: {
     task: Object,
     showTaskDetailDialog: Boolean,
+    roleInProject: integer,
   },
 
   components: {

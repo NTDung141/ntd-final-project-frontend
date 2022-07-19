@@ -13,6 +13,7 @@
           <TaskDescription
             :task="task"
             :showTaskDetailDialog="showTaskDetailDialog"
+            :roleInProject="roleInProject"
           />
 
           <SubtaskList :task="task" />
@@ -29,6 +30,7 @@
             :task="task"
             :project="project"
             :showTaskDetailDialog="showTaskDetailDialog"
+            :roleInProject="roleInProject"
           />
         </v-col>
       </v-row>
@@ -49,6 +51,7 @@ import REALTIMECOMMENT_ACTIONS from "@/store/modules/realtimeComment/realtimeCom
 import REALTIMECOMMENT_GETTERS from "@/store/modules/realtimeComment/realtimeComment-getters";
 import SubtaskList from "@/components/SubtaskList.vue";
 import SUBTASK_ACTIONS from "@/store/modules/subtask/subtask-actions";
+import AUTHENTICATION_GETTERS from "@/store/modules/authentication/authentication-getters";
 
 export default {
   name: "project-task-detail",
@@ -69,6 +72,7 @@ export default {
     ...mapGetters({
       project: PROJECT_GETTERS.project,
       commentList: REALTIMECOMMENT_GETTERS.commentList,
+      userInfo: AUTHENTICATION_GETTERS.userInfo,
     }),
 
     showTaskDetailDialog: {
@@ -85,7 +89,12 @@ export default {
     return {
       isEditting: false,
       content: this.task.description,
+      roleInProject: 0,
     };
+  },
+
+  mounted() {
+    this.checkRoleInProject();
   },
 
   methods: {
@@ -117,6 +126,14 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+
+    checkRoleInProject() {
+      this.project.users.forEach((member) => {
+        if (member.id == this.userInfo.id) {
+          this.roleInProject = member.pivot.role;
+        }
+      });
     },
   },
 
