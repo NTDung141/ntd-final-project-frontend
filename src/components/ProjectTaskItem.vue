@@ -16,7 +16,7 @@
       <img src="@/assets/defaultAvatar2.jpg" />
     </v-avatar>
 
-    <v-menu offset-y left>
+    <v-menu offset-y left v-if="roleInProject == 1">
       <template v-slot:activator="{ on, attrs }">
         <div class="task-item-actions-icon" v-bind="attrs" v-on="on">
           <i class="fas fa-ellipsis-h"></i>
@@ -70,6 +70,7 @@ import axios from "axios";
 import { CookieService } from "@/services/CookieService.js";
 import { TASK_API } from "@/factories/task.js";
 import TaskDeleteDialog from "@/components/TaskDeleteDialog.vue";
+import AUTHENTICATION_GETTERS from "@/store/modules/authentication/authentication-getters";
 
 export default {
   name: "project-task-item",
@@ -94,12 +95,14 @@ export default {
         { id: 3, name: "Resolve", style: "status-3" },
         { id: 4, name: "Closed", style: "status-4" },
       ],
+      roleInProject: 0,
     };
   },
 
   computed: {
     ...mapGetters({
       project: PROJECT_GETTERS.project,
+      userInfo: AUTHENTICATION_GETTERS.userInfo,
     }),
 
     sprintListToMove() {
@@ -110,6 +113,10 @@ export default {
 
       return sprintListToMove;
     },
+  },
+
+  mounted() {
+    this.checkRoleInProject();
   },
 
   methods: {
@@ -159,6 +166,14 @@ export default {
 
     deleteTask() {
       this.showDeleteTaskDialog = true;
+    },
+
+    checkRoleInProject() {
+      this.project.users.forEach((member) => {
+        if (member.id == this.userInfo.id) {
+          this.roleInProject = member.pivot.role;
+        }
+      });
     },
   },
 };
