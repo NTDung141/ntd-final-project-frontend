@@ -7,7 +7,7 @@
         <v-spacer></v-spacer>
 
         <v-btn
-          v-if="sprint.status === 1"
+          v-if="sprint.status === 1 && roleInProject == 1"
           small
           depressed
           color="primary"
@@ -24,6 +24,7 @@
           color="primary"
           class="mr-2"
           @click="completeSprint"
+          :disabled="roleInProject != 1"
         >
           Complete Sprint
         </v-btn>
@@ -32,7 +33,10 @@
           <i class="fas fa-check completed-icon ml-2"></i>
         </div>
 
-        <div class="project-sprint-actions" v-if="sprint.status !== 3">
+        <div
+          class="project-sprint-actions"
+          v-if="sprint.status !== 3 && roleInProject == 1"
+        >
           <i
             small
             class="fas fa-pen fa-2xs mr-2"
@@ -58,7 +62,7 @@
         :projectKey="projectKey"
       />
 
-      <v-card-actions v-if="sprint.status !== 3">
+      <v-card-actions v-if="sprint.status !== 3 && roleInProject == 1">
         <v-btn
           small
           text
@@ -99,9 +103,11 @@ import { TASK_API } from "@/factories/task.js";
 import axios from "axios";
 import { CookieService } from "@/services/CookieService.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
-import { mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import SprintCompleteDialog from "@/components/SprintCompleteDialog.vue";
 import SprintStartDialog from "@/components/SprintStartDialog.vue";
+import AUTHENTICATION_GETTERS from "@/store/modules/authentication/authentication-getters";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
 
 export default {
   name: "project-sprint-item",
@@ -129,10 +135,16 @@ export default {
       showCreateTaskDialog: false,
       showCompleteSprintDialog: false,
       showSprintStartDialog: false,
+      roleInProject: 0,
     };
   },
 
   computed: {
+    ...mapGetters({
+      project: PROJECT_GETTERS.project,
+      userInfo: AUTHENTICATION_GETTERS.userInfo,
+    }),
+
     tasks() {
       let taskToShow = [];
       if (this.sprint.tasks) {
@@ -142,6 +154,10 @@ export default {
         return taskToShow;
       }
     },
+  },
+
+  mounted() {
+    this.checkRoleInProject();
   },
 
   methods: {
@@ -171,6 +187,14 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+
+    checkRoleInProject() {
+      this.project.users.forEach((member) => {
+        if (member.id == this.userInfo.id) {
+          this.roleInProject = member.pivot.role;
+        }
+      });
     },
   },
 };

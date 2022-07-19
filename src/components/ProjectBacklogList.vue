@@ -6,7 +6,15 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn small depressed @click="createSprint"> Create Sprint </v-btn>
+        <v-btn
+          small
+          depressed
+          color="primary"
+          @click="createSprint"
+          :disabled="roleInProject != 1"
+        >
+          Create Sprint
+        </v-btn>
       </v-card-title>
 
       <div class="empty-task-item" v-if="tasks.length < 1">
@@ -26,6 +34,7 @@
           text
           class="project-backlog-list-create-task"
           @click="showCreateTaskDialog = true"
+          v-if="roleInProject == 1"
         >
           <i class="fas fa-plus mr-2"></i>
           Create issue
@@ -48,7 +57,10 @@ import axios from "axios";
 import { CookieService } from "@/services/CookieService.js";
 import { TASK_API } from "@/factories/task.js";
 import PROJECT_ACTIONS from "@/store/modules/project/project-actions";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import AUTHENTICATION_GETTERS from "@/store/modules/authentication/authentication-getters";
+import PROJECT_GETTERS from "@/store/modules/project/project-getters.js";
+
 export default {
   name: "project-backlog-list",
 
@@ -64,7 +76,12 @@ export default {
   data() {
     return {
       showCreateTaskDialog: false,
+      roleInProject: 0,
     };
+  },
+
+  mounted() {
+    this.checkRoleInProject();
   },
 
   methods: {
@@ -89,9 +106,22 @@ export default {
           console.log(err.response.data);
         });
     },
+
+    checkRoleInProject() {
+      this.project.users.forEach((member) => {
+        if (member.id == this.userInfo.id) {
+          this.roleInProject = member.pivot.role;
+        }
+      });
+    },
   },
 
   computed: {
+    ...mapGetters({
+      project: PROJECT_GETTERS.project,
+      userInfo: AUTHENTICATION_GETTERS.userInfo,
+    }),
+
     tasks() {
       let taskList = [];
       if (this.project && this.project.tasks) {
